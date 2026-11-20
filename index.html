@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Le jardin des mots</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Mise en page : un jardin. Chaque mot est une plante qui pousse quand l'enfant réussit. Onglets en haut, une scène de jeu au centre. */
+:root{
+  --bg:#e3f5f3; --surface:#ffffff; --ink:#1d3d44; --muted:#557479; --teal:#0e6b74; --teal-soft:#c9ecea;
+  --rose:#f6d5dc; --rose-ink:#b23a5c; --line:#9fd3cd; --field:#f2fbfa;
+  --leaf:#3f9a6b; --leaf-2:#6cc08f; --sun:#f4c04e; --soil:#9b7356; --pot:#e7a7b6; --good:#2f8f5b; --sky:#d3f0ff;
+  --display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --body:"Nunito","Segoe UI",system-ui,sans-serif;
+  --word:"Andika","Comic Sans MS","Segoe UI",system-ui,sans-serif;
+  --spacing:.02em;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f2427; --surface:#163236; --ink:#e3f2f0; --muted:#9dbcbf; --teal:#6fd0d6; --teal-soft:#1d4448;
+  --rose:#4a2a33; --rose-ink:#f59bb4; --line:#2e5a5e; --field:#12292c;
+  --leaf:#6cc08f; --leaf-2:#8fd8aa; --sun:#f4c04e; --soil:#b48b6c; --pot:#c97b8f; --good:#7fd3a0; --sky:#17393f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f2427; --surface:#163236; --ink:#e3f2f0; --muted:#9dbcbf; --teal:#6fd0d6; --teal-soft:#1d4448;
+  --rose:#4a2a33; --rose-ink:#f59bb4; --line:#2e5a5e; --field:#12292c;
+  --leaf:#6cc08f; --leaf-2:#8fd8aa; --sun:#f4c04e; --soil:#b48b6c; --pot:#c97b8f; --good:#7fd3a0; --sky:#17393f; color-scheme:dark}
+:root.spaced{--spacing:.18em}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--body);margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 48px;overflow-x:hidden}
+.wrap{max-width:1000px;margin:0 auto;display:flex;flex-direction:column;gap:18px;position:relative}
+.bubbles{position:absolute;top:0;left:0;width:90px;height:60px;pointer-events:none}
+.bubbles span{position:absolute;border-radius:50%;border:2px solid var(--teal);opacity:.35}
+header{padding-top:30px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px}
+h1{font:800 2.3rem/1 var(--display);color:var(--teal);margin:0;text-wrap:balance}
+h1 small{display:block;font:600 1rem/1.3 var(--body);color:var(--muted);margin-top:6px}
+h2{font:700 1.5rem/1.15 var(--display);color:var(--teal);margin:0;text-wrap:balance}
+h3{font:700 1.15rem/1.2 var(--display);color:var(--teal);margin:0}
+p{margin:0}
+.who{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.who label{font-weight:700;color:var(--muted);font-size:.9rem}
+select,input[type=text]{font:600 1rem var(--body);color:var(--ink);background:var(--field);border:2px solid var(--line);border-radius:12px;padding:8px 12px;min-width:0}
+button{font:800 1rem var(--body);cursor:pointer;border-radius:14px;border:0;color:inherit;background:none}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--rose-ink);outline-offset:2px}
+.btn{background:var(--teal);color:var(--bg);padding:10px 16px;box-shadow:0 3px 0 color-mix(in srgb,var(--teal) 60%,#000)}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 color-mix(in srgb,var(--teal) 60%,#000)}
+.btn.ghost{background:transparent;color:var(--teal);border:2px solid var(--teal);box-shadow:none}
+.btn.rose{background:var(--rose);color:var(--rose-ink);box-shadow:0 3px 0 color-mix(in srgb,var(--rose-ink) 45%,transparent)}
+.btn.big{font-size:1.2rem;padding:14px 22px;border-radius:18px}
+.btn.small{font-size:.85rem;padding:6px 10px;border-radius:10px}
+nav{display:flex;gap:8px;flex-wrap:wrap}
+nav button{padding:10px 16px;border-radius:999px;background:var(--surface);color:var(--teal);border:2px solid var(--line);font-family:var(--display);font-size:1.1rem;font-weight:700}
+nav button[aria-selected="true"]{background:var(--teal);color:var(--bg);border-color:var(--teal)}
+.panel{background:var(--surface);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:16px;border:2px solid var(--line)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.muted{color:var(--muted)}
+.hint{background:var(--rose);color:var(--rose-ink);border-radius:14px;padding:10px 14px;font-weight:600;font-size:.95rem}
+.toggle{display:flex;gap:6px;align-items:center;font-weight:700;color:var(--muted);font-size:.9rem;cursor:pointer}
+.toggle input{width:20px;height:20px;accent-color:var(--teal)}
+
+/* Mots et lettres */
+.w{font-family:var(--word);letter-spacing:var(--spacing);font-weight:700}
+.trap{color:var(--rose-ink);text-decoration:underline wavy color-mix(in srgb,var(--rose-ink) 55%,transparent);text-underline-offset:6px;text-decoration-thickness:2px}
+.wordlist{display:flex;flex-direction:column;gap:10px}
+.wordrow{display:flex;align-items:center;gap:12px;background:var(--field);border-radius:16px;padding:8px 10px;flex-wrap:wrap}
+.tiles{display:flex;flex-wrap:wrap;gap:4px;flex:1;min-width:0}
+.tile{font:700 1.5rem/1 var(--word);min-width:2.1rem;height:2.6rem;padding:0 6px;display:grid;place-items:center;border-radius:10px;background:var(--surface);color:var(--ink);border:2px solid var(--line)}
+.tile.on{background:var(--rose);color:var(--rose-ink);border-color:var(--rose-ink)}
+.tile.fixed{border-color:transparent;background:transparent;min-width:.8rem;cursor:default}
+.del{color:var(--muted);font-size:1.4rem;width:40px;height:40px;border-radius:50%}
+.del:hover{background:var(--rose);color:var(--rose-ink)}
+.mini-plant{width:34px;height:44px;flex:none}
+
+/* Jardin */
+.garden{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;background:linear-gradient(var(--sky),var(--sky) 70%,color-mix(in srgb,var(--leaf) 30%,var(--sky)) 70%);border-radius:20px;padding:14px 10px 10px}
+.pot{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0}
+.pot svg{width:70px;height:92px}
+.pot .lab{font:700 .95rem var(--word);background:var(--surface);border-radius:8px;padding:1px 8px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pot .lv{font-size:.75rem;color:var(--muted);font-weight:700}
+.p-leaf{fill:var(--leaf)} .p-leaf2{fill:var(--leaf-2)} .p-stem{stroke:var(--leaf);stroke-width:3;fill:none;stroke-linecap:round}
+.p-pot{fill:var(--pot)} .p-soil{fill:var(--soil)} .p-pet{fill:var(--rose-ink)} .p-pet2{fill:var(--rose)} .p-sun{fill:var(--sun)} .p-seed{fill:var(--soil)}
+
+/* Jeux */
+.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.game{background:var(--field);border:2px solid var(--line);border-radius:20px;padding:16px;text-align:left;display:flex;flex-direction:column;gap:6px;transition:transform .15s}
+.game:hover{transform:translateY(-3px);border-color:var(--teal)}
+.game .ic{font-size:2.2rem;line-height:1}
+.game b{font:700 1.25rem/1.1 var(--display);color:var(--teal)}
+.game span{color:var(--muted);font-weight:600;font-size:.92rem}
+.game.star{background:var(--rose);border-color:var(--rose-ink);grid-column:1/-1}
+.game.star b{color:var(--rose-ink);font-size:1.5rem}
+.game.star span{color:var(--ink)}
+.stage{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;min-height:300px}
+.top{display:flex;justify-content:space-between;align-items:center;width:100%;gap:10px;flex-wrap:wrap}
+.dots{display:flex;gap:5px;flex-wrap:wrap}
+.dots i{width:12px;height:12px;border-radius:50%;background:var(--line)}
+.dots i.ok{background:var(--leaf)} .dots i.now{background:var(--rose-ink)}
+.bigword{font:700 clamp(2.4rem,9vw,4.4rem)/1.1 var(--word);letter-spacing:var(--spacing);word-break:break-word;max-width:100%}
+.cloud{font-size:5rem;line-height:1}
+.timer{width:min(320px,80%);height:12px;background:var(--teal-soft);border-radius:99px;overflow:hidden}
+.timer i{display:block;height:100%;background:var(--teal);width:100%;transform-origin:left}
+.bee{display:flex;gap:10px;align-items:center;justify-content:center;font-weight:700;color:var(--teal);min-height:2.6rem}
+.bee svg{width:44px;height:40px;flex:none}
+.slots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.slot{font:700 2rem/1 var(--word);width:2.6rem;height:3.2rem;border-bottom:4px solid var(--line);display:grid;place-items:center}
+.slot.fill{border-color:var(--leaf);animation:pop .25s}
+.slot.fixed{border-color:transparent;width:1rem}
+.pick{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.pick .tile{font-size:2rem;height:3.4rem;min-width:3.2rem;cursor:pointer;box-shadow:0 3px 0 var(--line)}
+.hole{display:inline-block;min-width:1.3em;border-radius:10px;background:var(--rose);color:var(--rose-ink);padding:0 .1em;animation:pulse 1.2s infinite}
+.opts{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.opt{font:700 1.8rem/1 var(--word);padding:14px 22px;border-radius:16px;background:var(--field);border:3px solid var(--line);min-width:4rem;letter-spacing:var(--spacing)}
+.opt.ok{background:color-mix(in srgb,var(--leaf) 25%,var(--surface));border-color:var(--leaf)}
+.opt.no{background:var(--rose);border-color:var(--rose-ink);color:var(--rose-ink);text-decoration:line-through;opacity:.7}
+.shake{animation:shake .35s}
+@keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes pulse{50%{opacity:.55}}
+.speak{font-size:2.2rem;width:84px;height:84px;border-radius:50%;background:var(--teal);color:var(--bg);box-shadow:0 4px 0 color-mix(in srgb,var(--teal) 60%,#000)}
+.answer{font:700 2rem var(--word);text-align:center;width:min(420px,100%);letter-spacing:var(--spacing)}
+.cmp{font:700 2rem/1.2 var(--word);letter-spacing:var(--spacing)}
+.cmp .g{color:var(--good)} .cmp .b{color:var(--rose-ink);background:var(--rose);border-radius:6px}
+.defi{background:var(--rose);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center;max-width:560px}
+.defi .ic{font-size:3rem;line-height:1}
+.defi p{font:700 1.35rem/1.35 var(--display);color:var(--ink)}
+.defi .w{color:var(--rose-ink)}
+
+/* Attrape-bulles */
+.arena{position:relative;width:100%;height:min(62vh,520px);min-height:340px;border-radius:22px;overflow:hidden;background:radial-gradient(circle at 20% 15%,var(--surface),var(--sky) 60%);border:2px solid var(--line);touch-action:manipulation}
+.bub{position:absolute;left:0;top:0;padding:14px 18px;border-radius:999px;font:700 1.45rem/1 var(--word);letter-spacing:var(--spacing);color:var(--ink);
+  background:radial-gradient(circle at 30% 25%,color-mix(in srgb,var(--surface) 90%,transparent),color-mix(in srgb,var(--teal-soft) 75%,transparent) 70%);
+  border:2px solid color-mix(in srgb,var(--teal) 45%,transparent);box-shadow:inset -4px -6px 10px color-mix(in srgb,var(--teal) 15%,transparent);white-space:nowrap;will-change:transform;user-select:none;-webkit-user-select:none}
+.bub.hit{animation:burst .35s forwards;background:color-mix(in srgb,var(--leaf) 35%,var(--surface));border-color:var(--leaf)}
+.bub.miss{background:var(--rose);border-color:var(--rose-ink);color:var(--rose-ink)}
+@keyframes burst{to{opacity:0;scale:1.8}}
+.say{position:absolute;top:10px;left:50%;translate:-50% 0;background:var(--surface);border:2px solid var(--teal);border-radius:16px;padding:6px 14px;font:700 1.4rem var(--word);z-index:2}
+.score{display:flex;gap:14px;font-weight:800;color:var(--teal);font-variant-numeric:tabular-nums;flex-wrap:wrap;justify-content:center}
+.speed{display:flex;gap:6px}
+.speed button{padding:6px 10px;border-radius:10px;border:2px solid var(--line);font-size:.9rem}
+.speed button[aria-pressed="true"]{background:var(--teal);color:var(--bg);border-color:var(--teal)}
+
+/* Cartes */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.card{border:3px dashed var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--surface);break-inside:avoid}
+.card .w{font-size:2.6rem;line-height:1.1;text-align:center;word-break:break-word}
+.card .trap{color:transparent;-webkit-text-stroke:2px var(--rose-ink);text-decoration:none}
+.card .draw{border:2px solid var(--line);border-radius:14px;height:120px;padding:6px 10px;font-size:.8rem;color:var(--muted);font-weight:700}
+.card .lines{display:flex;flex-direction:column;gap:20px;padding-top:6px}
+.card .lines i{display:block;border-bottom:2px solid var(--line)}
+.card .days{display:flex;gap:6px;justify-content:space-between;font-size:.8rem;font-weight:800;color:var(--muted)}
+.card .days span{display:flex;flex-direction:column;align-items:center;gap:2px}
+.card .days b{width:22px;height:22px;border:2px solid var(--line);border-radius:6px;display:block}
+.defis-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;padding:0;margin:0;list-style:none}
+.defis-list li{background:var(--field);border-radius:14px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;font-weight:600}
+.defis-list li span:first-child{font-size:1.6rem;line-height:1}
+.sig{background:var(--surface);border-radius:18px;padding:14px 18px;display:flex;flex-direction:column;gap:2px;border-left:6px solid var(--teal)}
+.sig b{font-family:var(--display);font-size:1.15rem;color:var(--teal)}
+.card .by{font-size:.72rem;color:var(--muted);text-align:center;font-weight:600}
+.confetti{position:fixed;top:-20px;width:12px;height:16px;border-radius:50% 50% 50% 0;pointer-events:none;z-index:50;animation:fall 1.6s ease-in forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(540deg);opacity:.6}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
+@media (max-width:520px){h1{font-size:1.9rem}.panel{padding:14px;border-radius:18px}.tile{font-size:1.25rem;height:2.3rem;min-width:1.8rem}}
+@media print{
+  .noprint,header,nav{display:none!important}
+  body{background:#fff;color:#000;padding:0}
+  .panel{border:0;padding:0}
+  .card{border-color:#999}
+  .cards{grid-template-columns:1fr 1fr}
+}
+</style>
+</head><body>
+
+<div class="wrap">
+  <div class="bubbles" aria-hidden="true"><span style="width:26px;height:26px;left:8px;top:6px"></span><span style="width:14px;height:14px;left:40px;top:2px"></span><span style="width:10px;height:10px;left:30px;top:30px"></span><span style="width:18px;height:18px;left:58px;top:22px"></span></div>
+  <header class="noprint">
+    <h1>Le jardin des mots<small>Chaque mot bien retenu fait pousser une fleur.</small></h1>
+    <div class="who">
+      <label for="kid">Qui joue ?</label>
+      <select id="kid"></select>
+      <button class="btn ghost small" id="addKid" type="button">+ Un enfant</button>
+      <span id="kidForm" class="row" hidden><input type="text" id="kidName" placeholder="Prénom" maxlength="20" style="width:120px"><button class="btn small" id="kidOk" type="button">OK</button></span>
+      <label class="toggle"><input type="checkbox" id="spaced"> Lettres espacées</label>
+    </div>
+  </header>
+
+  <nav class="noprint" role="tablist">
+    <button role="tab" data-tab="mots" aria-selected="true" type="button">Mes mots</button>
+    <button role="tab" data-tab="jouer" aria-selected="false" type="button">Jouer</button>
+    <button role="tab" data-tab="cartes" aria-selected="false" type="button">Cartes à imprimer</button>
+    <button role="tab" data-tab="bouger" aria-selected="false" type="button">Bouger avec les mots</button>
+  </nav>
+
+  <!-- MES MOTS -->
+  <section class="panel" id="t-mots">
+    <div class="row" style="justify-content:space-between">
+      <h2>Les mots de la semaine</h2>
+      <span class="row">
+        <button class="btn ghost small" id="newWeek" type="button">Nouvelle semaine</button>
+        <button class="btn rose small" id="newWeekOk" type="button" hidden>Oui, effacer tous les mots</button>
+      </span>
+    </div>
+    <p class="hint" id="sampleNote" hidden>Ce sont des mots d'exemple. Cliquez sur « Nouvelle semaine » pour les effacer et écrire les vrais mots de dictée.</p>
+    <form class="row" id="addForm">
+      <input type="text" id="newWord" placeholder="Écrivez un mot (ou plusieurs, séparés par des virgules)" autocomplete="off" autocapitalize="off" spellcheck="false" style="flex:1;min-width:200px">
+      <button class="btn" type="submit">Ajouter</button>
+    </form>
+    <p class="muted">Touchez une lettre pour la mettre en <b class="trap">rose</b> : c'est une <b>lettre piège</b>, celle qu'on oublie ou qu'on confond. Les pièges courants (lettres doubles, muettes, accents, « eau », « ph »…) sont déjà repérés, vous pouvez corriger.</p>
+    <div class="wordlist" id="wordlist"></div>
+    <h3>Mon jardin</h3>
+    <div class="garden" id="garden1"></div>
+  </section>
+
+  <!-- JOUER -->
+  <section class="panel" id="t-jouer" hidden>
+    <div id="menu">
+      <div class="row" style="justify-content:space-between;margin-bottom:12px">
+        <h2>Choisis ton jeu</h2>
+        <label class="toggle"><input type="checkbox" id="pauses" checked> Pauses qui bougent</label>
+      </div>
+      <div class="games">
+        <button class="game star" data-game="bulles" type="button"><span class="ic">🫧</span><b>Attrape-bulles</b><span>Les mots flottent dans des bulles. Écoute le mot et touche vite la bonne orthographe. Attention aux bulles pièges !</span></button>
+        <button class="game" data-game="flash" type="button"><span class="ic">📸</span><b>Photo dans ma tête</b><span>Regarde le mot, ferme les yeux, et vois-le dans ta tête.</span></button>
+        <button class="game" data-game="melange" type="button"><span class="ic">🧩</span><b>Lettres mélangées</b><span>Remets les lettres dans le bon ordre.</span></button>
+        <button class="game" data-game="trou" type="button"><span class="ic">🎯</span><b>La lettre piège</b><span>Trouve les lettres qui manquent.</span></button>
+        <button class="game" data-game="bon" type="button"><span class="ic">🔍</span><b>Le bon mot</b><span>Un seul mot est bien écrit. Lequel ?</span></button>
+        <button class="game" data-game="dictee" type="button"><span class="ic">✨</span><b>Dictée magique</b><span>Écoute et écris le mot tout seul.</span></button>
+      </div>
+      <p class="muted" style="margin-top:12px">Ordre conseillé : la photo d'abord, la dictée magique en dernier.</p>
+    </div>
+    <div class="stage" id="stage" hidden></div>
+  </section>
+
+  <!-- CARTES -->
+  <section class="panel" id="t-cartes" hidden>
+    <div class="row noprint" style="justify-content:space-between">
+      <h2>Cartes à imprimer</h2>
+      <button class="btn" id="printBtn" type="button" hidden>Imprimer les cartes</button>
+    </div>
+    <p class="muted noprint" id="printNote">Les lettres pièges sont creuses : l'enfant les colorie et invente un dessin pour s'en souvenir (le « s » en serpent, les deux « l » en échelle…). Puis il coche chaque jour où il a relu sa carte.</p>
+    <p class="hint noprint" id="printHelp" hidden>Pour imprimer : ouvrez le fichier « Le jardin des mots » depuis votre PC ou votre clé USB, puis faites Ctrl + P.</p>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <!-- BOUGER -->
+  <section class="panel" id="t-bouger" hidden>
+    <h2>Bouger avec les mots</h2>
+    <p class="muted">Le corps aide la mémoire. Tirez un défi au hasard, avec un mot de la liste.</p>
+    <div style="display:flex;justify-content:center"><div class="defi" id="randDefi"></div></div>
+    <div class="row" style="justify-content:center"><button class="btn big" id="newDefi" type="button">Un autre défi</button></div>
+    <h3>Tous les défis</h3>
+    <ul class="defis-list" id="defisList"></ul>
+  </section>
+  <aside class="sig">
+    <b>Juliette Rigaut, psychomotricienne</b>
+    <span>51 avenue du Général de Gaulle, 78290 Croissy-sur-Seine</span>
+    <span>Tél. 06 62 16 69 25</span>
+  </aside>
+</div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const pickOne=a=>a[Math.floor(Math.random()*a.length)];
+const chars=w=>Array.from(String(w).normalize('NFC'));
+const isL=c=>/\p{L}/u.test(c);
+const KEY='jardin-des-mots-v1';
+
+/* ---------- Données ---------- */
+const SAMPLE=['beaucoup','maison','toujours','pharmacie','village','lettre'];
+let S;
+function load(){try{S=JSON.parse(localStorage.getItem(KEY));}catch(e){S=null;}
+  if(!S||!S.kids){S={cur:'Mon enfant',spaced:false,pauses:true,kids:{}};S.kids['Mon enfant']={sample:true,best:null,words:SAMPLE.map(mk)};}
+  if(!S.kids[S.cur])S.cur=Object.keys(S.kids)[0];}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function kid(){return S.kids[S.cur];}
+function mk(w){w=w.normalize('NFC').trim();return {w,t:autoTraps(w),lvl:0};}
+
+/* Repérage automatique des lettres pièges */
+function autoTraps(w){
+  const c=chars(w).map(x=>x.toLowerCase()), n=c.length, m=new Set(), s=c.join('');
+  for(let i=0;i<n-1;i++) if(isL(c[i])&&c[i]===c[i+1]&&!'aeiou'.includes(c[i])){m.add(i);m.add(i+1);}
+  c.forEach((x,i)=>{if('éèêëàâîïôûùüç'.includes(x))m.add(i);});
+  const groups=['eau','ph','qu','ain','ein','aim','au','y'];
+  groups.forEach(g=>{let p=s.indexOf(g);while(p>=0){for(let k=0;k<g.length;k++)m.add(p+k);p=s.indexOf(g,p+1);}});
+  for(let i=0;i<n-1;i++){if((c[i]==='e')&&(c[i+1]==='n'||c[i+1]==='m')&&!(i+2<n&&'aeiouyéèên'.includes(c[i+2]))&&!(i+2<n&&c[i+1]==='m'&&c[i+2]==='m')){if(i+2<n||c[i+1]==='m'){m.add(i);m.add(i+1);}}}
+  for(let i=0;i<n-1;i++) if(c[i]==='m'&&'bp'.includes(c[i+1]))m.add(i);
+  if(c[0]==='h')m.add(0);
+  if(n>2&&'stdxpz'.includes(c[n-1])&&!'aeiouy'.includes(c[n-1])) m.add(n-1);
+  return [...m].sort((a,b)=>a-b);
+}
+
+/* Groupes de lettres pièges qui se suivent */
+function chunks(o){const c=chars(o.w),t=new Set(o.t),out=[];let cur=null;
+  c.forEach((x,i)=>{if(t.has(i)&&isL(x)){if(cur&&cur.e===i-1){cur.e=i;}else{cur={s:i,e:i};out.push(cur);}}});
+  return out.map(k=>({s:k.s,e:k.e,txt:c.slice(k.s,k.e+1).join('')}));}
+
+const ALT={'ss':['s','c'],'s':['ss','z','c'],'c':['ss','s','k'],'ç':['ss','s','c'],'qu':['k','c'],'ph':['f','ff'],'f':['ph','ff'],'ff':['f','ph'],
+'é':['er','ez','è','ai'],'è':['ai','é','ê'],'ê':['è','ai','é'],'ë':['e','è'],'er':['é','ez','ai'],'ai':['é','è','ei'],'ei':['ai','è'],
+'au':['o','eau','ô'],'eau':['o','au','ot'],'o':['au','eau'],'ô':['o','au'],
+'en':['an','em','am'],'em':['en','an','am'],'an':['en','am'],'am':['an','em'],
+'ain':['in','ein','un'],'ein':['ain','in'],'in':['ain','ein','im'],'aim':['ain','in','im'],
+'g':['gu','j'],'gu':['g','gh'],'j':['g','ge'],'ge':['j','g'],
+'à':['a','â'],'â':['a','à'],'î':['i','ï'],'ï':['i','î'],'û':['u','ù'],'ù':['u','û'],'ü':['u'],
+'h':['∅'],'y':['i','ï','ill'],'x':['s','∅','t'],'t':['∅','d','s'],'d':['∅','t'],'p':['∅','b'],'z':['s','∅'],
+'ll':['l','y'],'m':['n'],'tt':['t'],'rr':['r'],'nn':['n'],'mm':['m'],'pp':['p'],'cc':['c','k']};
+function alternatives(txt,atEnd){
+  const low=txt.toLowerCase(); let a=(ALT[low]||[]).slice();
+  if(!a.length){ if(low.length===2&&low[0]===low[1]) a=[low[0]]; else if(low.length===1&&!'aeiouy'.includes(low)) a=[low+low,'∅']; }
+  if(atEnd&&!a.includes('∅')&&low.length<=2&&!'aeiouyéèêà'.includes(low.slice(-1)))a.push('∅');
+  if(!atEnd&&a.includes('∅')&&low!=='h')a=a.filter(x=>x!=='∅');
+  const fill=['e','s','∅','h'];for(const f of fill){if(a.length>=3)break;if(f!==low&&!a.includes(f))a.push(f);}
+  if(txt[0]&&txt[0]!==txt[0].toLowerCase())a=a.map(x=>x==='∅'?x:x[0].toUpperCase()+x.slice(1));
+  return a.filter(x=>x.toLowerCase()!==low);
+}
+/* Fausses orthographes d'un mot */
+function misspell(o,max){
+  const c=chars(o.w), out=new Set(), ks=chunks(o);
+  ks.forEach(k=>alternatives(k.txt,k.e===c.length-1).forEach(a=>out.add(c.slice(0,k.s).join('')+(a==='∅'?'':a)+c.slice(k.e+1).join(''))));
+  const w=o.w;
+  for(let i=1;i<c.length-1;i++){
+    if('aeiouéèê'.includes(c[i-1])&&'lmnprst'.includes(c[i])&&'aeiouyé'.includes(c[i+1]))out.add(c.slice(0,i+1).join('')+c[i]+c.slice(i+1).join(''));
+    if(c[i]===c[i+1]&&!'aeiou'.includes(c[i]))out.add(c.slice(0,i).join('')+c.slice(i+1).join(''));
+  }
+  if(!/[sx]$/.test(w))out.add(w+'s');
+  if(/[aeiouy]$/i.test(w)&&!/e$/.test(w))out.add(w+'e');
+  if(/e$/.test(w)&&w.length>3)out.add(w.slice(0,-1));
+  out.delete(w);[...out].forEach(x=>{if(!x.trim()||x.toLowerCase()===w.toLowerCase())out.delete(x);});
+  return shuffle([...out]).slice(0,max);
+}
+function wordHTML(o,cls){const t=new Set(o.t);return chars(o.w).map((x,i)=>t.has(i)?`<span class="trap">${esc(x)}</span>`:esc(x)).join('');}
+
+/* ---------- Voix ---------- */
+const hasSpeech='speechSynthesis' in window && typeof SpeechSynthesisUtterance!=='undefined';
+let frVoice=null;
+function pickVoice(){try{const v=speechSynthesis.getVoices();frVoice=v.find(x=>/^fr(-|_)FR/i.test(x.lang)&&/Am[ée]lie|Thomas|Audrey|Google|Denise|Julie|Paul/i.test(x.name))||v.find(x=>/^fr/i.test(x.lang))||null;}catch(e){}}
+if(hasSpeech){pickVoice();try{speechSynthesis.onvoiceschanged=pickVoice;}catch(e){}}
+function speak(t,rate){if(!hasSpeech)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';if(frVoice)u.voice=frVoice;u.rate=rate||.8;speechSynthesis.speak(u);}catch(e){}}
+
+/* ---------- Plantes ---------- */
+function plant(l){
+  let g='<path class="p-pot" d="M14 70h32l-4 20H18z"/><rect class="p-pot" x="11" y="64" width="38" height="8" rx="3"/><ellipse class="p-soil" cx="30" cy="65" rx="17" ry="3"/>';
+  if(l===0) g+='<ellipse class="p-seed" cx="30" cy="60" rx="6" ry="4.5"/><path class="p-leaf2" d="M30 56 q-1 -6 4 -8 q-1 6 -4 8z"/>';
+  if(l>=1){const h=[0,52,42,32,26,22][l];g+=`<path class="p-stem" d="M30 64 Q28 ${(64+h)/2} 30 ${h}"/>`;
+    g+='<ellipse class="p-leaf" cx="23" cy="56" rx="7" ry="3.5" transform="rotate(-25 23 56)"/><ellipse class="p-leaf2" cx="37" cy="54" rx="7" ry="3.5" transform="rotate(25 37 54)"/>';
+    if(l>=2)g+='<ellipse class="p-leaf" cx="22" cy="44" rx="8" ry="4" transform="rotate(-30 22 44)"/><ellipse class="p-leaf2" cx="38" cy="42" rx="8" ry="4" transform="rotate(30 38 42)"/>';
+    if(l===3)g+='<ellipse class="p-pet" cx="30" cy="27" rx="5" ry="7"/><path class="p-leaf" d="M25 31 Q30 36 35 31 Q30 33 25 31z"/>';
+    if(l>=4){for(let k=0;k<6;k++){const a=k*60*Math.PI/180;g+=`<ellipse class="${k%2?'p-pet2':'p-pet'}" cx="${30+Math.cos(a)*8}" cy="${20+Math.sin(a)*8}" rx="6" ry="6"/>`;}g+='<circle class="p-sun" cx="30" cy="20" r="5"/>';}
+    if(l>=5)g+='<path class="p-sun" d="M9 10l1.5 3.5L14 15l-3.5 1.5L9 20l-1.5-3.5L4 15l3.5-1.5z"/><path class="p-sun" d="M51 6l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1z"/>';
+  }
+  return `<svg viewBox="0 0 60 92" aria-hidden="true">${g}</svg>`;
+}
+const LV=['graine','pousse','tige','bouton','fleur','fleur d’or'];
+function renderGarden(el){const ws=kid().words;
+  el.innerHTML=ws.length?ws.map(o=>`<div class="pot">${plant(o.lvl)}<span class="lab w">${esc(o.w)}</span><span class="lv">${LV[o.lvl]}</span></div>`).join(''):'<p class="muted" style="grid-column:1/-1;text-align:center;padding:20px">Ajoutez des mots pour planter des graines.</p>';}
+
+/* ---------- Onglets ---------- */
+function tab(name){document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===name));
+  ['mots','jouer','cartes','bouger'].forEach(t=>$('#t-'+t).hidden=t!==name);
+  if(name==='mots')renderWords(); if(name==='cartes')renderCards(); if(name==='bouger')renderMove(); if(name==='jouer')showMenu();}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>tab(b.dataset.tab));
+
+/* ---------- Enfants ---------- */
+function renderKids(){$('#kid').innerHTML=Object.keys(S.kids).map(k=>`<option ${k===S.cur?'selected':''}>${esc(k)}</option>`).join('');}
+$('#kid').onchange=e=>{S.cur=e.target.value;save();tab('mots');};
+$('#addKid').onclick=()=>{$('#kidForm').hidden=false;$('#kidName').focus();};
+function addKid(){const n=$('#kidName').value.trim();if(!n)return;if(!S.kids[n])S.kids[n]={words:[],best:null};S.cur=n;save();$('#kidName').value='';$('#kidForm').hidden=true;renderKids();tab('mots');}
+$('#kidOk').onclick=addKid;$('#kidName').onkeydown=e=>{if(e.key==='Enter')addKid();};
+$('#spaced').onchange=e=>{S.spaced=e.target.checked;document.documentElement.classList.toggle('spaced',S.spaced);save();};
+$('#pauses').onchange=e=>{S.pauses=e.target.checked;save();};
+
+/* ---------- Mes mots ---------- */
+function renderWords(){const k=kid();$('#sampleNote').hidden=!k.sample;
+  $('#wordlist').innerHTML=k.words.map((o,wi)=>{const t=new Set(o.t);
+    return `<div class="wordrow"><span class="mini-plant">${plant(o.lvl)}</span><div class="tiles">${chars(o.w).map((x,i)=>isL(x)?`<button type="button" class="tile ${t.has(i)?'on':''}" data-w="${wi}" data-i="${i}" aria-pressed="${t.has(i)}" aria-label="lettre ${esc(x)}">${esc(x)}</button>`:`<span class="tile fixed">${x===' '?'&nbsp;':esc(x)}</span>`).join('')}</div><button type="button" class="del" data-del="${wi}" aria-label="Enlever ${esc(o.w)}">×</button></div>`;}).join('')||'<p class="muted">Aucun mot pour l’instant. Écrivez le premier mot de la dictée ci-dessus.</p>';
+  renderGarden($('#garden1'));}
+$('#wordlist').onclick=e=>{const b=e.target.closest('button');if(!b)return;const k=kid();
+  if(b.dataset.del!==undefined){k.words.splice(+b.dataset.del,1);k.sample=false;}
+  else{const o=k.words[+b.dataset.w],i=+b.dataset.i,p=o.t.indexOf(i);if(p>=0)o.t.splice(p,1);else{o.t.push(i);o.t.sort((a,b)=>a-b);}k.sample=false;}
+  save();renderWords();};
+$('#addForm').onsubmit=e=>{e.preventDefault();const k=kid();const list=$('#newWord').value.split(/[\n,;]+/).map(x=>x.trim()).filter(Boolean);
+  list.forEach(w=>{if(!k.words.some(o=>o.w===w.normalize('NFC')))k.words.push(mk(w));});$('#newWord').value='';k.sample=false;save();renderWords();};
+$('#newWeek').onclick=()=>{$('#newWeekOk').hidden=false;$('#newWeek').hidden=true;};
+$('#newWeekOk').onclick=()=>{kid().words=[];kid().sample=false;save();$('#newWeekOk').hidden=true;$('#newWeek').hidden=false;renderWords();$('#newWord').focus();};
+
+/* ---------- Défis du corps ---------- */
+const DEFIS=[
+ ['💪','Écris « {m} » en très grand dans l’air avec ton bras tendu.'],
+ ['🦘','Épelle « {m} » en sautant à chaque lettre. Saute plus haut sur les lettres roses !'],
+ ['🤫','Écris « {m} » avec ton doigt dans le dos d’un adulte. Il doit deviner le mot.'],
+ ['👏','Épelle « {m} » en tapant dans tes mains : une lettre, un clap. Tape des pieds sur les lettres roses.'],
+ ['🏖️','Trace « {m} » avec ton doigt dans un plateau de sable, de semoule ou de farine.'],
+ ['🦶','Écris « {m} » dans l’air avec ton pied, puis avec ton coude.'],
+ ['🧸','Forme les lettres roses de « {m} » avec de la pâte à modeler ou avec ton corps.'],
+ ['🗣️','Chuchote les lettres de « {m} », puis dis les lettres roses avec une grosse voix.'],
+ ['🚶','Marche sur une ligne : un pas par lettre de « {m} ». Tourne sur toi-même à chaque lettre rose.'],
+ ['🙈','Écris « {m} » les yeux fermés sur une feuille, puis ouvre les yeux pour vérifier.'],
+ ['⚽','Lance la balle à un adulte à chaque lettre de « {m} ». Il la renvoie avec la lettre suivante.'],
+ ['🎨','Dessine une image cachée dans les lettres roses de « {m} » (un serpent pour le s, une échelle pour ll…).'],
+];
+function defiHTML(o){const d=pickOne(DEFIS);const m=o?`<span class="w">${wordHTML(o)}</span>`:'ton mot';return `<span class="ic">${d[0]}</span><p>${esc(d[1]).replace('{m}',m)}</p>`;}
+function renderMove(){const ws=kid().words;$('#randDefi').innerHTML=defiHTML(ws.length?pickOne(ws):null);
+  $('#defisList').innerHTML=DEFIS.map(d=>`<li><span>${d[0]}</span><span>${esc(d[1].replace('« {m} »','le mot').replace('de « {m} »','du mot'))}</span></li>`).join('');}
+$('#newDefi').onclick=renderMove;
+
+/* ---------- Cartes ---------- */
+let canPrint=true;try{canPrint=window.self===window.top;}catch(e){canPrint=false;}
+function renderCards(){const ws=kid().words;$('#printBtn').hidden=!canPrint;$('#printHelp').hidden=canPrint;
+  $('#cards').innerHTML=ws.map(o=>`<div class="card"><div class="w">${wordHTML(o)}</div><div class="draw">Mon dessin pour retenir les lettres roses</div><div class="lines"><i></i><i></i><i></i></div><div class="days">${['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].map(d=>`<span>${d}<b></b></span>`).join('')}</div><div class="by">Juliette Rigaut, psychomotricienne · Croissy-sur-Seine · 06 62 16 69 25</div></div>`).join('')||'<p class="muted">Ajoutez d’abord des mots dans « Mes mots ».</p>';}
+$('#printBtn').onclick=()=>{try{window.print();}catch(e){}};
+
+/* ---------- Encouragements ---------- */
+const BRAVO=['Bravo !','Super, ta fleur pousse !','Génial !','Quelle mémoire !','Trop fort !','Ça pousse !'];
+const ENCORE=['Presque ! Regarde bien les lettres roses.','Pas grave, on réessaie.','Les lettres roses sont rusées !'];
+const BEE='<svg viewBox="0 0 44 40" aria-hidden="true"><ellipse cx="15" cy="10" rx="8" ry="6" fill="var(--teal-soft)"/><ellipse cx="27" cy="9" rx="8" ry="6" fill="var(--teal-soft)"/><ellipse cx="22" cy="24" rx="15" ry="11" fill="var(--sun)"/><path d="M17 14v20M24 13v22" stroke="var(--ink)" stroke-width="3.5"/><circle cx="33" cy="21" r="2" fill="var(--ink)"/><path d="M31 27q3 2 5-1" stroke="var(--ink)" stroke-width="1.5" fill="none"/></svg>';
+function bee(msg){return `<div class="bee">${BEE}<span>${esc(msg)}</span></div>`;}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const cols=['var(--rose-ink)','var(--sun)','var(--leaf)','var(--teal)','var(--pot)'];
+  for(let i=0;i<26;i++){const s=document.createElement('span');s.className='confetti';s.style.left=Math.random()*100+'vw';s.style.background=pickOne(cols);s.style.animationDelay=Math.random()*.4+'s';document.body.appendChild(s);setTimeout(()=>s.remove(),2200);}}
+
+/* ---------- Moteur de jeu ---------- */
+let G=null;const stage=$('#stage');
+function showMenu(){stopBulles();G=null;$('#menu').hidden=false;stage.hidden=true;stage.innerHTML='';}
+document.querySelectorAll('.game').forEach(b=>b.onclick=()=>start(b.dataset.game));
+function start(type){const ws=kid().words;if(!ws.length){tab('mots');$('#newWord').focus();return;}
+  if(type==='bulles')return startBulles();
+  G={type,queue:shuffle(ws).slice(0,12),i:0,drops:0,res:[],paused:{}};$('#menu').hidden=true;stage.hidden=false;next();}
+function topBar(o){return `<div class="top"><button class="btn ghost small" type="button" data-act="quit">← Jeux</button><div class="dots">${G.queue.map((_,i)=>`<i class="${i<G.i?(G.res[i]?'ok':''):i===G.i?'now':''}"></i>`).join('')}</div>${hasSpeech&&o?`<button class="btn small" type="button" data-act="say">🔊 Écouter</button>`:'<span></span>'}</div>`;}
+stage.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
+  if(a==='quit')showMenu(); else if(a==='say')speak(G.queue[G.i].w); else if(a==='next'){G.i++;next();} else if(a==='again')start(G.type); else if(a==='menu')showMenu(); else if(a==='go')next(true);});
+function next(skipPause){if(!G)return;
+  if(!skipPause&&S.pauses&&G.i>0&&G.i<G.queue.length&&G.i%4===0&&!G.paused[G.i]){G.paused[G.i]=1;
+    stage.innerHTML=`${topBar(null)}<h2>Pause qui bouge !</h2><div class="defi">${defiHTML(pickOne(G.queue.slice(0,G.i)))}</div><button class="btn big" type="button" data-act="go">C’est fait, on continue</button>`;return;}
+  if(G.i>=G.queue.length)return finish();
+  const o=G.queue[G.i];({flash,melange,trou,bon,dictee})[G.type](o);}
+function done(o,ok){G.res[G.i]=ok;if(ok){o.lvl=Math.min(5,o.lvl+1);G.drops++;confetti();}save();}
+function nextBtn(){return `<button class="btn big" type="button" data-act="next">${G.i+1<G.queue.length?'Mot suivant →':'Voir mon jardin 🌷'}</button>`;}
+function finish(){const n=G.drops;stage.innerHTML=`${topBar(null)}<h2>Bravo, c’est fini !</h2>${bee(`Tu as gagné ${n} goutte${n>1?'s':''} d’eau 💧 pour ton jardin.`)}<div class="garden" id="garden2" style="width:100%"></div><div class="defi">${defiHTML(pickOne(G.queue))}</div><div class="row" style="justify-content:center"><button class="btn big" type="button" data-act="again">Rejouer</button><button class="btn big ghost" type="button" data-act="menu">Autre jeu</button></div>`;renderGarden($('#garden2'));confetti();}
+
+/* Photo dans ma tête */
+function flash(o){let left=5;
+  stage.innerHTML=`${topBar(o)}<h2>Prends une photo dans ta tête 📸</h2><div class="bigword">${wordHTML(o)}</div><div class="timer"><i id="tb"></i></div><p class="muted">Regarde bien les lettres roses.</p><button class="btn" type="button" id="snap">J’ai ma photo</button>`;
+  speak(o.w);const tb=$('#tb');tb.style.transition='transform 5s linear';requestAnimationFrame(()=>requestAnimationFrame(()=>tb.style.transform='scaleX(0)'));
+  const to=setTimeout(hide,5000);$('#snap').onclick=()=>{clearTimeout(to);hide();};
+  function hide(){if(!G||G.queue[G.i]!==o)return;stage.innerHTML=`${topBar(o)}<h2>Ferme les yeux…</h2><div class="cloud">☁️</div><p style="font-size:1.15rem;font-weight:700">Vois-tu le mot ? Épelle-le à voix haute, lettre par lettre.</p><button class="btn big" type="button" id="chk">Je vérifie</button>`;
+    $('#chk').onclick=()=>{stage.innerHTML=`${topBar(o)}<h2>C’était…</h2><div class="bigword">${wordHTML(o)}</div><div class="row" style="justify-content:center"><button class="btn big" type="button" id="y">Je l’avais ✔</button><button class="btn big rose" type="button" id="n">Pas encore</button></div>`;
+      $('#y').onclick=()=>{done(o,true);stage.innerHTML=`${topBar(o)}<div class="bigword">${wordHTML(o)}</div>${bee(pickOne(BRAVO))}${nextBtn()}`;};
+      $('#n').onclick=()=>{done(o,false);stage.innerHTML=`${topBar(o)}<div class="bigword">${wordHTML(o)}</div>${bee('On le reverra. Dessine les lettres roses dans l’air avec ton doigt.')}${nextBtn()}`;};};}
+}
+/* Lettres mélangées */
+function melange(o){const c=chars(o.w),t=new Set(o.t);let pos=c.findIndex(isL),err=0;
+  let tiles=c.map((x,i)=>({x,i})).filter(z=>isL(z.x));let sh=shuffle(tiles);if(tiles.length>1)for(let k=0;k<5&&sh.every((z,j)=>z.x===tiles[j].x);k++)sh=shuffle(tiles);
+  stage.innerHTML=`${topBar(o)}<h2>Remets les lettres dans l’ordre</h2><div class="slots">${c.map((x,i)=>isL(x)?`<span class="slot" id="s${i}"></span>`:`<span class="slot fixed">${x===' '?'':esc(x)}</span>`).join('')}</div><div class="pick" id="pk">${sh.map(z=>`<button type="button" class="tile ${t.has(z.i)?'on':''}" data-x="${esc(z.x)}">${esc(z.x)}</button>`).join('')}</div><div id="fb" class="bee"></div>`;
+  speak(o.w);
+  $('#pk').onclick=e=>{const b=e.target.closest('button');if(!b||pos<0)return;
+    if(b.dataset.x.toLowerCase()===c[pos].toLowerCase()){const s=$('#s'+pos);s.textContent=c[pos];s.classList.add('fill');if(t.has(pos))s.classList.add('trap');b.remove();
+      pos=c.findIndex((x,i)=>i>pos&&isL(x));
+      if(pos<0){const ok=err===0;done(o,ok);$('#fb').outerHTML=bee(ok?pickOne(BRAVO):'Réussi ! Rejoue pour faire pousser ta fleur.')+nextBtn();}}
+    else{err++;b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');$('#fb').innerHTML=`${BEE}<span>Cherche la lettre qui vient après.</span>`;}};
+}
+/* La lettre piège */
+function trou(o){const c=chars(o.w);let ks=chunks(o);
+  if(!ks.length){const L=c.map((x,i)=>i).filter(i=>isL(c[i]));const i=pickOne(L);ks=[{s:i,e:i,txt:c[i]}];}
+  const k=pickOne(ks);const alts=shuffle(alternatives(k.txt,k.e===c.length-1)).slice(0,3);const opts=shuffle([k.txt,...alts]);let first=true;
+  const t=new Set(o.t);const before=c.slice(0,k.s).map((x,i)=>t.has(i)?`<span class="trap">${esc(x)}</span>`:esc(x)).join(''),after=c.slice(k.e+1).map((x,j)=>t.has(k.e+1+j)?`<span class="trap">${esc(x)}</span>`:esc(x)).join('');
+  stage.innerHTML=`${topBar(o)}<h2>Quelles lettres manquent ?</h2><div class="bigword">${before}<span class="hole" id="hole">?</span>${after}</div><div class="opts" id="op">${opts.map(x=>`<button type="button" class="opt" data-x="${esc(x)}">${x==='∅'?'rien':esc(x)}</button>`).join('')}</div><div id="fb"></div>`;
+  speak(o.w);
+  $('#op').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)return;
+    if(b.dataset.x===k.txt){b.classList.add('ok');$('#hole').outerHTML=`<span class="trap">${esc(k.txt)}</span>`;$('#op').querySelectorAll('button').forEach(x=>x.disabled=true);done(o,first);$('#fb').outerHTML=bee(first?pickOne(BRAVO):'Voilà ! Regarde bien ces lettres roses.')+nextBtn();}
+    else{first=false;b.classList.add('no','shake');b.disabled=true;}};
+}
+/* Le bon mot */
+function bon(o){const wrong=misspell(o,3);const opts=shuffle([o.w,...wrong]);let first=true;
+  stage.innerHTML=`${topBar(o)}<h2>Lequel est bien écrit ?</h2>${hasSpeech?'':`<p class="muted">Un adulte lit le mot à voix haute.</p>`}<div class="opts" id="op">${opts.map(x=>`<button type="button" class="opt" data-x="${esc(x)}">${esc(x)}</button>`).join('')}</div><div id="fb"></div>`;
+  speak(o.w);
+  $('#op').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)return;
+    if(b.dataset.x===o.w){b.classList.add('ok');b.innerHTML=wordHTML(o);$('#op').querySelectorAll('button').forEach(x=>x.disabled=true);done(o,first);$('#fb').outerHTML=bee(first?pickOne(BRAVO):'Trouvé ! Les autres étaient des pièges.')+nextBtn();}
+    else{first=false;b.classList.add('no','shake');b.disabled=true;}};
+}
+/* Dictée magique */
+function dictee(o){let peek=false;
+  stage.innerHTML=`${topBar(null)}<h2>Dictée magique ✨</h2>${hasSpeech?`<button class="speak" type="button" id="sp" aria-label="Écouter le mot">🔊</button><p class="muted">Touche le haut-parleur pour réécouter.</p>`:`<p class="hint">Un adulte lit le mot à voix haute.</p>`}
+  <form id="df" class="row" style="justify-content:center;width:100%"><input type="text" id="ans" class="answer" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Écris le mot"><button class="btn big" type="submit">Valider</button></form>
+  <button class="btn ghost small" type="button" id="pk">Petit coup d’œil (2 secondes)</button><div id="peekw" class="bigword" style="min-height:1.2em"></div><div id="fb"></div>`;
+  if(hasSpeech){$('#sp').onclick=()=>speak(o.w,.7);speak(o.w,.7);}
+  setTimeout(()=>{try{$('#ans').focus();}catch(e){}},50);
+  $('#pk').onclick=()=>{peek=true;$('#peekw').innerHTML=wordHTML(o);setTimeout(()=>{const p=$('#peekw');if(p)p.innerHTML='';},2000);};
+  $('#df').onsubmit=e=>{e.preventDefault();const v=$('#ans').value.normalize('NFC').trim().replace(/’/g,"'");if(!v)return;
+    const ok=v.toLowerCase()===o.w.replace(/’/g,"'").toLowerCase();const a=chars(v),c=chars(o.w);
+    const cmp=a.map((x,i)=>`<span class="${c[i]&&x.toLowerCase()===c[i].toLowerCase()?'g':'b'}">${esc(x)}</span>`).join('');
+    if(ok){done(o,!peek);}else{G.res[G.i]=false;o.lvl=Math.max(0,o.lvl-1);save();}
+    stage.innerHTML=`${topBar(null)}<h2>${ok?'Bravo ! ✨':'Presque !'}</h2>${ok?'':`<p class="muted">Tu as écrit :</p><div class="cmp">${cmp}</div><p class="muted">Le mot s’écrit :</p>`}<div class="bigword">${wordHTML(o)}</div>${bee(ok?(peek?'Réussi ! La prochaine fois, sans coup d’œil ?':pickOne(BRAVO)):pickOne(ENCORE))}${nextBtn()}`;};
+}
+
+/* ---------- Attrape-bulles ---------- */
+let B=null;const SPEEDS={tortue:.35,lapin:.7,fusee:1.15};
+function startBulles(){const ws=kid().words;
+  B={queue:shuffle(ws).concat(ws.length<5?shuffle(ws):[]).slice(0,10),i:0,pts:0,t0:0,total:0,errs:0,raf:0,bubs:[],speed:B&&B.speed||'lapin',locked:false};
+  $('#menu').hidden=true;stage.hidden=false;
+  stage.innerHTML=`<div class="top"><button class="btn ghost small" type="button" id="bq">← Jeux</button><div class="score"><span id="bn"></span><span id="bp">⭐ 0</span></div><div class="speed" role="group" aria-label="Vitesse">${['tortue','lapin','fusee'].map(s=>`<button type="button" data-s="${s}" aria-pressed="${s===B.speed}">${{tortue:'🐢',lapin:'🐇',fusee:'🚀'}[s]}</button>`).join('')}</div></div>
+  <div class="arena" id="arena"></div><div class="row" style="justify-content:center"><button class="btn" type="button" id="brep">🔊 Réécouter</button></div><div id="bfb" class="bee"></div>`;
+  $('#bq').onclick=showMenu;$('#brep').onclick=()=>{const o=B.queue[B.i];if(hasSpeech)speak(o.w);else showSay(o);};
+  stage.querySelector('.speed').onclick=e=>{const b=e.target.closest('button');if(!b)return;B.speed=b.dataset.s;stage.querySelectorAll('.speed button').forEach(x=>x.setAttribute('aria-pressed',x===b));};
+  $('#arena').onpointerdown=hit;
+  roundB();loop();}
+function showSay(o){const a=$('#arena');if(!a)return;const s=document.createElement('div');s.className='say';s.innerHTML=wordHTML(o);a.appendChild(s);setTimeout(()=>s.remove(),1500);}
+function roundB(){const a=$('#arena');if(!a)return;a.querySelectorAll('.bub').forEach(x=>x.remove());B.bubs=[];B.locked=false;
+  const o=B.queue[B.i];$('#bn').textContent=`Mot ${B.i+1} / ${B.queue.length}`;$('#bfb').innerHTML=`${BEE}<span>Écoute bien et touche la bonne bulle !</span>`;
+  const others=shuffle(kid().words.filter(x=>x!==o)).slice(0,3).map(x=>({txt:x.w,good:false}));
+  const traps=misspell(o,2).map(x=>({txt:x,good:false,trap:true}));
+  const items=shuffle([{txt:o.w,good:true},...traps,...others]);
+  const W=a.clientWidth,H=a.clientHeight;
+  items.forEach((it,k)=>{const el=document.createElement('button');el.type='button';el.className='bub';el.textContent=it.txt;el.dataset.k=k;a.appendChild(el);
+    const bw=el.offsetWidth,bh=el.offsetHeight;const ang=Math.random()*Math.PI*2;
+    B.bubs.push({el,good:it.good,x:Math.random()*Math.max(1,W-bw),y:50+Math.random()*Math.max(1,H-bh-50),vx:Math.cos(ang),vy:Math.sin(ang),w:bw,h:bh,ph:Math.random()*6});});
+  setTimeout(()=>{if(!B)return;if(hasSpeech)speak(o.w);else showSay(o);B.t0=performance.now();},350);}
+function loop(){if(!B)return;const a=$('#arena');if(!a){B=null;return;}const W=a.clientWidth,H=a.clientHeight,v=SPEEDS[B.speed]*1.6;
+  B.bubs.forEach(b=>{if(b.gone)return;b.ph+=.03;b.x+=b.vx*v;b.y+=b.vy*v+Math.sin(b.ph)*.25;
+    if(b.x<0){b.x=0;b.vx=Math.abs(b.vx);}if(b.x>W-b.w){b.x=W-b.w;b.vx=-Math.abs(b.vx);}
+    if(b.y<0){b.y=0;b.vy=Math.abs(b.vy);}if(b.y>H-b.h){b.y=H-b.h;b.vy=-Math.abs(b.vy);}
+    b.el.style.transform=`translate(${b.x}px,${b.y}px)`;});
+  B.raf=requestAnimationFrame(loop);}
+function hit(e){const el=e.target.closest('.bub');if(!el||!B||B.locked)return;e.preventDefault();const b=B.bubs[+el.dataset.k];const o=B.queue[B.i];
+  if(b.good){B.locked=true;const sec=(performance.now()-B.t0)/1000;B.total+=sec;const st=sec<4?3:sec<8?2:1;B.pts+=st;
+    el.classList.add('hit');b.gone=true;confetti();if(st===3&&!b.missed){o.lvl=Math.min(5,o.lvl+1);save();}
+    $('#bp').textContent='⭐ '+B.pts;$('#bfb').innerHTML=`${BEE}<span>${'⭐'.repeat(st)} ${sec.toFixed(1).replace('.',',')} s ! ${pickOne(BRAVO)}</span>`;
+    setTimeout(()=>{if(!B)return;B.i++;if(B.i>=B.queue.length)finishB();else roundB();},1300);}
+  else{B.errs++;el.classList.add('miss','shake');B.bubs.forEach(x=>{if(x.good)x.missed=true;});$('#bfb').innerHTML=`${BEE}<span>Oups, cette bulle est un piège ! Réécoute le mot.</span>`;setTimeout(()=>el.classList.remove('shake'),400);}}
+function finishB(){const k=kid();const tot=B.total;const rec=k.best==null||tot<k.best;if(rec){k.best=tot;save();}const pts=B.pts,errs=B.errs,n=B.queue.length;stopBulles();
+  stage.innerHTML=`<div class="top"><button class="btn ghost small" type="button" data-act="menu">← Jeux</button></div><h2>${rec?'Nouveau record ! 🏆':'Bravo !'}</h2>
+  <div class="score" style="font-size:1.3rem"><span>⭐ ${pts} / ${n*3}</span><span>⏱️ ${tot.toFixed(1).replace('.',',')} s</span><span>🫧 ${errs} bulle${errs>1?'s':''} piège${errs>1?'s':''}</span></div>
+  <p class="muted">Record de ${esc(S.cur)} : ${k.best.toFixed(1).replace('.',',')} s</p>${bee('Les bulles bien attrapées du premier coup et vite font pousser tes fleurs.')}
+  <div class="garden" id="garden3" style="width:100%"></div><div class="row" style="justify-content:center"><button class="btn big" type="button" id="bag">Rejouer</button><button class="btn big ghost" type="button" data-act="menu">Autre jeu</button></div>`;
+  renderGarden($('#garden3'));$('#bag').onclick=startBulles;confetti();}
+function stopBulles(){if(B){cancelAnimationFrame(B.raf);B=null;}}
+
+/* ---------- Démarrage ---------- */
+load();document.documentElement.classList.toggle('spaced',!!S.spaced);$('#spaced').checked=!!S.spaced;$('#pauses').checked=S.pauses!==false;S.pauses=S.pauses!==false;
+renderKids();renderWords();
+})();
+</script>
+</body></html>
