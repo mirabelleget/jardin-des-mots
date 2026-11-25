@@ -319,7 +319,7 @@ function face(e){
   let eyes='<circle cx="-9" cy="-2" r="3.2" fill="#1d1d1d"/><circle cx="9" cy="-2" r="3.2" fill="#1d1d1d"/>';
   let brows='', mouth='<path d="M-9 9 Q0 17 9 9" stroke="#1d1d1d" stroke-width="2.6" fill="none" stroke-linecap="round"/>', extra='';
   const cheeks='<circle cx="-15" cy="7" r="4" fill="#f28b9b" opacity=".45"/><circle cx="15" cy="7" r="4" fill="#f28b9b" opacity=".45"/>';
-  if(e==='triste'){brows='<path d="M-14 -10 L-5 -7 M14 -10 L5 -7" stroke="#1d1d1d" stroke-width="2.2" stroke-linecap="round"/>';mouth='<path d="M-8 14 Q0 7 8 14" stroke="#1d1d1d" stroke-width="2.6" fill="none" stroke-linecap="round"/>';extra='<path d="M-10 3 q-3 6 0 8 q3 -2 0 -8z" fill="#5bb7e8"/>';}
+  if(e==='triste'){brows='<path d="M-14 -7 L-5 -11 M14 -7 L5 -11" stroke="#1d1d1d" stroke-width="2.2" stroke-linecap="round"/>';mouth='<path d="M-8 14 Q0 7 8 14" stroke="#1d1d1d" stroke-width="2.6" fill="none" stroke-linecap="round"/>';extra='<path d="M-10 3 q-3 6 0 8 q3 -2 0 -8z" fill="#5bb7e8"/>';}
   if(e==='malade'){eyes='<path d="M-12 -2 h6 M6 -2 h6" stroke="#1d1d1d" stroke-width="2.6" stroke-linecap="round"/>';mouth='<path d="M-6 12 Q0 9 6 12" stroke="#1d1d1d" stroke-width="2.4" fill="none" stroke-linecap="round"/>';extra='<rect x="-20" y="-20" width="16" height="7" rx="3" fill="#fff" stroke="#c9b28f" transform="rotate(-18)"/><circle cx="-15" cy="7" r="5" fill="#e86a6a" opacity=".5"/><circle cx="15" cy="7" r="5" fill="#e86a6a" opacity=".5"/><line x1="4" y1="11" x2="22" y2="20" stroke="#bbb" stroke-width="3" stroke-linecap="round"/><circle cx="22" cy="20" r="2.5" fill="#e05555"/>';return eyes+mouth+extra;}
   if(e==='fatigue'){eyes='<path d="M-12 -1 q3 3 6 0 M6 -1 q3 3 6 0" stroke="#1d1d1d" stroke-width="2.4" fill="none" stroke-linecap="round"/>';mouth='<ellipse cx="0" cy="12" rx="4" ry="3" fill="#1d1d1d"/>';}
   if(e==='colere'){brows='<path d="M-14 -11 L-5 -6 M14 -11 L5 -6" stroke="#1d1d1d" stroke-width="2.6" stroke-linecap="round"/>';mouth='<path d="M-8 13 Q0 8 8 13" stroke="#1d1d1d" stroke-width="2.6" fill="none" stroke-linecap="round"/>';extra='<circle cx="-15" cy="7" r="5" fill="#e04848" opacity=".45"/><circle cx="15" cy="7" r="5" fill="#e04848" opacity=".45"/>';return eyes+brows+mouth+extra;}
@@ -331,7 +331,7 @@ function face(e){
 }
 function hair(h,c,back){
   if(back){
-    if(h==='long')return `<path d="M-30 -6 Q-32 40 -22 46 L22 46 Q32 40 30 -6 Z" fill="${c}"/>`;
+    if(h==='long')return `<path d="M-29 -8 Q-36 26 -30 42 Q-24 47 -15 42 Q-19 24 -20 6 Z" fill="${c}"/><path d="M29 -8 Q36 26 30 42 Q24 47 15 42 Q19 24 20 6 Z" fill="${c}"/>`;
     return '';
   }
   switch(h){
