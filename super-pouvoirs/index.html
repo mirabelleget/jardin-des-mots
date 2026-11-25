@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+<meta name="apple-mobile-web-app-title" content="Super-pouvoirs">
+<meta name="theme-color" content="#0e6b74">
+<title>Mes super-pouvoirs avec les autres</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Mise en page : un carnet à 4 onglets. Les cartes d'habiletés (avec petite scène animée), l'atelier pour en ajouter, le jardin + tableau des étoiles, la page parents. */
+:root{
+  --bg:#e3f5f3; --surface:#ffffff; --surface2:#f2fbfa; --ink:#1d3d44; --muted:#5b7a80;
+  --teal:#0e6b74; --teal-soft:#cfeeea; --rose:#f6d5dc; --rose-ink:#9b3d55; --line:#bfe2de;
+  --sun:#f4b400; --sun-soft:#fff3c4; --leaf:#2f8f5b; --leaf-soft:#e2f4e8;
+  --display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --body:"Nunito","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f2427; --surface:#163236; --surface2:#1b3a3f; --ink:#e3f2f0; --muted:#9dbcbf; --teal:#6fd0d6; --teal-soft:#1f474c; --rose:#4a2a33; --rose-ink:#f3b8c6; --line:#24484c;
+  --sun:#f7c948; --sun-soft:#3a3313; --leaf:#7fd3a0; --leaf-soft:#173a29; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f2427; --surface:#163236; --surface2:#1b3a3f; --ink:#e3f2f0; --muted:#9dbcbf; --teal:#6fd0d6; --teal-soft:#1f474c; --rose:#4a2a33; --rose-ink:#f3b8c6; --line:#24484c;
+  --sun:#f7c948; --sun-soft:#3a3313; --leaf:#7fd3a0; --leaf-soft:#173a29; color-scheme:dark}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px;overflow-x:hidden}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:22px;position:relative}
+.bubbles{position:absolute;top:-8px;left:-8px;width:90px;height:70px;pointer-events:none}
+.bubbles span{position:absolute;border-radius:50%;border:3px solid var(--rose-ink);opacity:.45}
+.bubbles span:nth-child(2){border-color:var(--teal)}
+header{padding-top:40px;display:flex;flex-wrap:wrap;gap:16px 28px;align-items:flex-end;justify-content:space-between}
+header .titles{min-width:0;flex:1 1 520px}
+.eyebrow{font:800 .8rem var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--rose-ink)}
+h1{font:800 clamp(2rem,5vw,2.8rem)/1.05 var(--display);color:var(--teal);margin:.2rem 0 0;text-wrap:balance}
+h2{font:800 1.6rem/1.15 var(--display);color:var(--teal);margin:0;text-wrap:balance}
+h3{font:700 1.25rem/1.2 var(--display);margin:0;text-wrap:balance}
+.lede{margin:.5rem 0 0;color:var(--muted);max-width:62ch}
+p{margin:0}
+.who{display:flex;gap:12px;align-items:center;background:var(--surface);border-radius:20px;padding:10px 14px;flex-wrap:wrap}
+.who label{font-weight:800;color:var(--teal);font-size:.9rem}
+input,textarea,select{font:inherit;color:var(--ink);background:var(--surface2);border:2px solid var(--line);border-radius:12px;padding:8px 12px;width:100%}
+input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.who input{width:11rem}
+.avatars{display:flex;gap:6px;flex-wrap:wrap}
+.av{width:52px;height:52px;border-radius:50%;border:3px solid transparent;background:var(--teal-soft);padding:0;cursor:pointer;overflow:hidden}
+.av[aria-pressed="true"]{border-color:var(--rose-ink);background:var(--rose)}
+.av svg{width:100%;height:100%;display:block}
+nav.tabs{display:flex;flex-wrap:wrap;gap:8px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px}
+nav.tabs button{font:800 1rem var(--body);color:var(--teal);background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:8px 18px;cursor:pointer}
+nav.tabs button[aria-selected="true"]{background:var(--teal);border-color:var(--teal);color:var(--bg)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.btn{font:800 .95rem var(--body);border:0;border-radius:999px;padding:9px 16px;cursor:pointer;display:inline-flex;gap:8px;align-items:center;justify-content:center;background:var(--teal);color:var(--bg)}
+.btn.soft{background:var(--teal-soft);color:var(--teal)}
+.btn.rose{background:var(--rose);color:var(--rose-ink)}
+.btn.ghost{background:transparent;color:var(--muted);padding:9px 10px}
+.btn svg{width:18px;height:18px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+/* Cartes */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font:700 .85rem var(--body);border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--teal);background:var(--teal-soft);color:var(--teal)}
+.groups{display:flex;flex-direction:column;gap:26px}
+.group{display:flex;flex-direction:column;gap:12px}
+.gtitle{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:1.35rem}
+.gtitle small{font:700 .85rem var(--body);color:var(--muted)}
+.dot{display:inline-block;width:14px;height:14px;border-radius:50%;flex:none}
+.chip .dot{width:10px;height:10px;margin-right:6px;vertical-align:0}
+#domFilters{gap:6px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}
+.card{background:var(--surface);border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0;border:2px solid transparent}
+.card.mastered{border-color:var(--leaf)}
+.thumb{border-radius:16px;overflow:hidden;cursor:pointer;position:relative;border:0;padding:0;background:none;display:block;width:100%}
+.thumb svg{display:block;width:100%;height:auto}
+.thumb .play{position:absolute;right:10px;bottom:10px;background:var(--teal);color:#fff;border-radius:999px;font:800 .85rem var(--body);padding:6px 12px;display:flex;gap:6px;align-items:center}
+.thumb .play svg{width:14px;height:14px}
+.card .when{font-size:.92rem;color:var(--muted)}
+.say{background:var(--sun-soft);border-radius:16px 16px 16px 4px;padding:8px 12px;font-weight:700}
+.why{font-size:.95rem}
+.why b{color:var(--teal)}
+.stages{display:flex;gap:4px;background:var(--surface2);border-radius:999px;padding:4px}
+.stages button{flex:1;font:700 .78rem var(--body);border:0;background:transparent;color:var(--muted);border-radius:999px;padding:5px 4px;cursor:pointer;display:flex;gap:4px;align-items:center;justify-content:center}
+.stages button svg{width:18px;height:18px}
+.stages button[aria-pressed="true"]{background:var(--leaf-soft);color:var(--leaf)}
+.tip{font-size:.88rem;background:var(--surface2);border-radius:12px;padding:8px 10px;color:var(--muted)}
+.tip b{color:var(--rose-ink)}
+.confirm{background:var(--rose);color:var(--rose-ink);border-radius:12px;padding:8px 10px;font-weight:700;font-size:.9rem;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+/* Scène */
+.stage-wrap{position:relative;width:100%;aspect-ratio:600/340;max-width:100%;border-radius:20px;overflow:hidden;background:var(--teal-soft)}
+.stage-wrap>svg{position:absolute;inset:0;width:100%;height:100%}
+.bubble{position:absolute;max-width:46%;background:#fff;color:#1d3d44;border:3px solid #1d3d44;border-radius:18px;padding:6px 10px;font:700 clamp(.7rem,2.3vw,1.05rem)/1.25 var(--body);transform-origin:bottom center;animation:pop .35s ease-out both}
+.bubble.l{left:4%;top:5%}
+.bubble.r{right:4%;top:5%}
+.bubble::after{content:"";position:absolute;bottom:-14px;width:18px;height:14px;background:#fff;border:3px solid #1d3d44;border-top:0;clip-path:polygon(0 0,100% 0,50% 100%)}
+.bubble.l::after{left:26%}
+.bubble.r::after{right:26%}
+.bubble small{display:block;font:800 .7em var(--body);color:#9b3d55;text-transform:uppercase;letter-spacing:.06em}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+.talk{animation:bob .5s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:bottom center}
+@keyframes bob{from{transform:translateY(0)}to{transform:translateY(-6px)}}
+.heart{animation:float 2.2s ease-out infinite}
+@keyframes float{0%{transform:translateY(0);opacity:0}20%{opacity:1}100%{transform:translateY(-60px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.talk,.heart,.bubble{animation:none}}
+dialog{border:0;border-radius:26px;padding:0;background:var(--surface);color:var(--ink);width:min(760px,calc(100vw - 24px));max-height:calc(100vh - 24px)}
+dialog::backdrop{background:rgba(10,40,44,.55)}
+.dlg{padding:16px;display:flex;flex-direction:column;gap:12px}
+.dlg-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.caption{font-size:1rem;color:var(--muted)}
+.dots{display:flex;gap:6px}
+.dots span{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots span.on{background:var(--teal)}
+/* Formulaire */
+.form{background:var(--surface);border-radius:24px;padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.form .col{display:flex;flex-direction:column;gap:12px;min-width:0}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label,.field .lbl{font-weight:800;color:var(--teal);font-size:.92rem}
+.field .hint{font-size:.82rem;color:var(--muted)}
+textarea{min-height:68px;resize:vertical}
+.steps{display:flex;flex-direction:column;gap:8px}
+.step{display:grid;grid-template-columns:9.5rem 1fr auto;gap:6px;align-items:start}
+.step select{padding:8px}
+.picker{display:flex;gap:6px;flex-wrap:wrap}
+.picker button{border:3px solid transparent;border-radius:14px;background:var(--surface2);padding:4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;font:700 .75rem var(--body);color:var(--ink);width:76px}
+.picker button svg{width:60px;height:60px}
+.picker button[aria-pressed="true"]{border-color:var(--rose-ink);background:var(--rose)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--teal);color:var(--bg);font-weight:800;padding:10px 18px;border-radius:999px;z-index:20}
+/* Jardin et tableau */
+.garden{background:var(--surface);border-radius:24px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.garden-svg{width:100%;overflow-x:auto}
+.garden-svg svg{display:block;min-width:560px;width:100%;height:auto}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.9rem;color:var(--muted)}
+.legend span{display:flex;gap:6px;align-items:center}
+.legend svg{width:22px;height:22px}
+.board{background:var(--surface);border-radius:24px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.table-scroll{overflow-x:auto}
+table{border-collapse:separate;border-spacing:4px;width:100%;min-width:620px}
+th{font:800 .85rem var(--body);color:var(--teal);text-align:center;padding:4px}
+th.sk{text-align:left}
+td.sk{font-weight:700;padding:4px 6px;min-width:12rem}
+td.sk small{display:block;color:var(--muted);font-weight:600}
+td.c{text-align:center;background:var(--surface2);border-radius:12px;padding:0}
+td.c button{width:100%;min-width:40px;height:44px;border:0;background:transparent;cursor:pointer;border-radius:12px;display:flex;align-items:center;justify-content:center}
+td.c button svg{width:28px;height:28px}
+td.tot{text-align:center;font:800 1.1rem var(--display);color:var(--teal);font-variant-numeric:tabular-nums}
+.jar{display:flex;gap:18px;align-items:center;flex-wrap:wrap;background:var(--sun-soft);border-radius:20px;padding:14px}
+.jar svg{width:110px;height:auto;flex:none}
+.jar .big{font:800 2.4rem/1 var(--display);color:var(--teal);font-variant-numeric:tabular-nums}
+.jar .lvl{font:800 1.2rem var(--display);color:var(--rose-ink)}
+.parents{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.pcard{background:var(--surface);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.pcard h3{color:var(--teal)}
+.pcard ul{margin:0;padding-left:1.1rem;display:flex;flex-direction:column;gap:4px}
+.save{background:var(--surface);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.save textarea{font:600 .8rem/1.3 ui-monospace,Consolas,monospace;min-height:90px}
+.sig{background:var(--surface);border-radius:18px;padding:14px 18px;border-left:6px solid var(--teal);display:flex;flex-direction:column;gap:2px}
+.sig b{font-family:var(--display);color:var(--teal);font-size:1.2rem}
+.sig span{user-select:all}
+@media (max-width:720px){.form{grid-template-columns:1fr}.step{grid-template-columns:1fr auto}.step select{grid-column:1/-1}}
+</style>
+
+<div class="wrap">
+  <div class="bubbles" aria-hidden="true"><span style="width:34px;height:34px;left:10px;top:12px"></span><span style="width:18px;height:18px;left:50px;top:2px"></span><span style="width:22px;height:22px;left:62px;top:34px"></span></div>
+  <header>
+    <div class="titles">
+      <div class="eyebrow">Habiletés sociales · à faire avec les parents</div>
+      <h1 id="mainTitle">Mes super-pouvoirs avec les autres</h1>
+      <p class="lede">Chaque carte est un petit super-pouvoir pour être bien avec les autres, rangé dans l'un des 8 domaines des habiletés sociales : quand l'utiliser, quoi dire, et pourquoi c'est important. Regardez la petite histoire ensemble, entraînez-vous, puis gagnez des étoiles dans le tableau.</p>
+    </div>
+    <div class="who">
+      <div class="field"><label for="prenom">Prénom de l'enfant</label><input id="prenom" placeholder="ex. Léo" maxlength="20" autocomplete="off"></div>
+      <div class="field"><span class="lbl" id="avLbl">Mon personnage</span><div class="avatars" id="avatars" role="group" aria-labelledby="avLbl"></div></div>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Parties du carnet">
+    <button role="tab" id="t-cartes" aria-selected="true" data-tab="cartes">Mes cartes</button>
+    <button role="tab" id="t-ajouter" aria-selected="false" data-tab="ajouter">Ajouter une habileté</button>
+    <button role="tab" id="t-tableau" aria-selected="false" data-tab="tableau">Mon jardin et mes étoiles</button>
+    <button role="tab" id="t-parents" aria-selected="false" data-tab="parents">Pour les parents</button>
+  </nav>
+
+  <!-- CARTES -->
+  <section id="p-cartes" role="tabpanel" aria-labelledby="t-cartes" style="display:flex;flex-direction:column;gap:14px">
+    <div class="toolbar">
+      <div class="filters" id="stageFilters" role="group" aria-label="Filtrer par étape">
+        <button class="chip" aria-pressed="true" data-f="all">Toutes</button>
+        <button class="chip" aria-pressed="false" data-f="0">Je découvre</button>
+        <button class="chip" aria-pressed="false" data-f="1">Je m'entraîne</button>
+        <button class="chip" aria-pressed="false" data-f="2">Je sais faire</button>
+      </div>
+      <button class="btn" data-goto="ajouter"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v14M3 10h14" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>Nouvelle habileté</button>
+    </div>
+    <div class="filters" id="domFilters" role="group" aria-label="Filtrer par domaine"></div>
+    <div id="cards" class="groups"></div>
+  </section>
+
+  <!-- AJOUTER -->
+  <section id="p-ajouter" role="tabpanel" aria-labelledby="t-ajouter" hidden style="flex-direction:column;gap:14px">
+    <div><h2 id="formTitle">Ajouter une nouvelle habileté</h2><p class="lede">Écrivez avec les mots de votre enfant, en phrases courtes. La petite histoire se met à jour à droite pendant que vous écrivez.</p></div>
+    <form class="form" id="form" novalidate>
+      <div class="col">
+        <div class="field"><label for="f-titre">Le super-pouvoir (titre)</label><input id="f-titre" required maxlength="60" placeholder="ex. Demander des nouvelles"></div>
+        <div class="field"><label for="f-quand">Quand je l'utilise ?</label><input id="f-quand" maxlength="140" placeholder="ex. Quand quelqu'un a été malade ou à l'hôpital"></div>
+        <div class="field"><label for="f-dire">Ce que je peux dire ou faire</label><input id="f-dire" maxlength="140" placeholder="ex. « Comment tu te sens ? Ça va mieux ? »"></div>
+        <div class="field"><label for="f-pourquoi">Pourquoi c'est important (expliqué à l'enfant)</label><textarea id="f-pourquoi" maxlength="400" placeholder="ex. Quand on est malade, on se sent fatigué. Si quelqu'un pense à nous, ça fait du bien."></textarea></div>
+        <div class="field"><label for="f-domaine">Le domaine</label><select id="f-domaine"></select></div>
+        <div class="field"><label for="f-astuce">Astuce pour les parents (facultatif)</label><textarea id="f-astuce" maxlength="300" placeholder="ex. Le lendemain, rappelez-lui doucement de demander."></textarea></div>
+      </div>
+      <div class="col">
+        <div class="field"><span class="lbl">La petite histoire</span><div class="stage-wrap" id="preview"></div></div>
+        <div class="field"><span class="lbl" id="decLbl">Le décor</span><div class="picker" id="pick-decor" role="group" aria-labelledby="decLbl"></div></div>
+        <div class="field"><span class="lbl" id="othLbl">L'autre personne</span><div class="picker" id="pick-other" role="group" aria-labelledby="othLbl"></div></div>
+        <div class="row">
+          <div class="field" style="flex:1;min-width:8rem"><label for="f-emo1">Au début, l'autre est…</label><select id="f-emo1"></select></div>
+          <div class="field" style="flex:1;min-width:8rem"><label for="f-emo2">À la fin, l'autre est…</label><select id="f-emo2"></select></div>
+        </div>
+        <div class="field"><span class="lbl">Les bulles de l'histoire (2 à 4)</span><div class="steps" id="steps"></div><div><button type="button" class="btn soft" id="addStep">Ajouter une bulle</button></div></div>
+      </div>
+      <div class="row" style="grid-column:1/-1;justify-content:flex-end">
+        <p id="formMsg" class="caption" style="flex:1" role="status"></p>
+        <button type="button" class="btn ghost" id="cancelEdit" hidden>Annuler</button>
+        <button type="submit" class="btn">Enregistrer la carte</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- TABLEAU -->
+  <section id="p-tableau" role="tabpanel" aria-labelledby="t-tableau" hidden style="flex-direction:column;gap:16px">
+    <div class="garden">
+      <div><h2 id="gardenTitle">Mon jardin des super-pouvoirs</h2><p class="caption">Chaque habileté pousse comme une plante. Elle devient un arbre quand l'enfant sait la faire tout seul.</p></div>
+      <div class="garden-svg" id="garden"></div>
+      <div class="legend">
+        <span><svg viewBox="0 0 40 40" aria-hidden="true" id="lg0"></svg>Je découvre (graine)</span>
+        <span><svg viewBox="0 0 40 40" aria-hidden="true" id="lg1"></svg>Je m'entraîne (pousse)</span>
+        <span><svg viewBox="0 0 40 40" aria-hidden="true" id="lg2"></svg>Je sais faire (arbre)</span>
+      </div>
+    </div>
+    <div class="board">
+      <div class="toolbar"><div><h2>Mon tableau des étoiles</h2><p class="caption">Une étoile chaque jour où l'enfant a utilisé son super-pouvoir (même avec un petit rappel).</p></div>
+        <div class="row" id="resetZone"><button class="btn rose" id="resetWeek">Nouvelle semaine</button></div></div>
+      <div class="table-scroll"><table id="table"></table></div>
+      <div class="jar" id="jar"></div>
+    </div>
+  </section>
+
+  <!-- PARENTS -->
+  <section id="p-parents" role="tabpanel" aria-labelledby="t-parents" hidden style="flex-direction:column;gap:16px">
+    <div><h2>Comment utiliser ce carnet</h2><p class="lede">Les habiletés sociales ne sont pas innées : elles s'apprennent, comme faire du vélo. L'enfant a besoin de comprendre, de voir, d'essayer, puis de réussir plusieurs fois.</p></div>
+    <div class="parents">
+      <div class="pcard"><h3>Une seule à la fois</h3><p>Choisissez une habileté pour une ou deux semaines. Passez-la en « Je m'entraîne ». Quand elle devient naturelle, passez-la en « Je sais faire » et choisissez la suivante.</p></div>
+      <div class="pcard"><h3>Expliquer avant</h3><p>Regardez la petite histoire ensemble à un moment calme, pas au milieu d'une crise. Demandez-lui : « Qu'est-ce qu'il ressent ? Et après ? »</p></div>
+      <div class="pcard"><h3>Jouer la scène</h3><p>Rejouez l'histoire avec des peluches, des marionnettes ou en inversant les rôles. Le corps retient mieux ce qu'il a déjà fait : regard, sourire, distance, ton de voix.</p></div>
+      <div class="pcard"><h3>Montrer l'exemple</h3><p>Il vous observe. Dites à voix haute ce que vous faites : « Je vais appeler Mamie pour savoir comment elle va. »</p></div>
+      <div class="pcard"><h3>Féliciter précisément</h3><p>Plutôt que « c'est bien », dites : « Tu as demandé à Lina si elle allait mieux, tu as vu son sourire ? » et ajoutez l'étoile ensemble.</p></div>
+      <div class="pcard"><h3>Un petit rappel, c'est permis</h3><p>Avant la situation, un mot suffit : « Tout à l'heure on voit Papy. Tu te souviens de ton super-pouvoir ? » Une réussite avec un rappel compte aussi.</p></div>
+    </div>
+    <div class="save">
+      <h3 style="color:var(--teal)">Garder le carnet</h3>
+      <p class="caption">Le carnet est enregistré uniquement sur cet appareil, dans ce navigateur. Pour le transférer sur un autre appareil, copiez le code ci-dessous puis collez-le sur l'autre appareil et appuyez sur « Charger ce code ».</p>
+      <textarea id="saveCode" aria-label="Code du carnet"></textarea>
+      <div class="row"><button class="btn soft" id="copyCode">Copier le code</button><button class="btn soft" id="loadCode">Charger ce code</button><span id="saveMsg" class="caption" role="status"></span></div>
+      <div class="row" id="resetAllZone"><button class="btn ghost" id="resetAll">Revenir aux exemples de départ</button></div>
+    </div>
+  </section>
+
+  <div class="sig"><b>Juliette Rigaut, psychomotricienne</b><span>51 avenue du Général de Gaulle, 78290 Croissy-sur-Seine</span><span>Tél. 06 62 16 69 25</span></div>
+</div>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <div class="dlg">
+    <div class="dlg-head"><div><h2 id="dlgTitle"></h2><p class="caption" id="dlgWhen"></p></div><button class="btn ghost" id="dlgClose" aria-label="Fermer">Fermer</button></div>
+    <div class="stage-wrap" id="dlgStage"></div>
+    <div class="row" style="justify-content:space-between">
+      <div class="dots" id="dlgDots" aria-hidden="true"></div>
+      <div class="row">
+        <button class="btn soft" id="dlgPrev">Avant</button>
+        <button class="btn" id="dlgNext">Suite</button>
+        <button class="btn rose" id="dlgSound" aria-pressed="true">Couper le son</button>
+      </div>
+    </div>
+    <p class="say" id="dlgSay"></p>
+    <p class="why" id="dlgWhy"></p>
+  </div>
+</dialog>
+<div class="toast" id="toast" hidden role="status"></div>
+
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const KEY='super-pouvoirs-v1';
+
+/* ---------- Personnages ---------- */
+const SKIN={a:'#f6d3b8',b:'#e0ab7d',c:'#a86b43',d:'#6b4129'};
+const KIDS=[
+  {id:'g1',nom:'Garçon',type:'enfant',skin:SKIN.a,hair:'court',hc:'#c98a3c',shirt:'#3aa0d8'},
+  {id:'f1',nom:'Fille',type:'enfant',skin:SKIN.a,hair:'couettes',hc:'#7a4a24',shirt:'#e7738f'},
+  {id:'g2',nom:'Garçon',type:'enfant',skin:SKIN.c,hair:'boucles',hc:'#2b1a12',shirt:'#f4b400'},
+  {id:'f2',nom:'Fille',type:'enfant',skin:SKIN.d,hair:'chignon',hc:'#1c120c',shirt:'#7bc67e'},
+  {id:'g3',nom:'Garçon',type:'enfant',skin:SKIN.b,hair:'court',hc:'#1f1a17',shirt:'#9b6bd0'},
+  {id:'f3',nom:'Fille',type:'enfant',skin:SKIN.b,hair:'long',hc:'#3b2416',shirt:'#f08a3c'},
+];
+const OTHERS={
+  copain:{nom:'Un copain',label:'Le copain',type:'enfant',skin:SKIN.c,hair:'boucles',hc:'#2b1a12',shirt:'#2fb39a'},
+  copine:{nom:'Une copine',label:'La copine',type:'enfant',skin:SKIN.b,hair:'long',hc:'#2b1a12',shirt:'#f2a3b8'},
+  mamie:{nom:'Mamie',label:'Mamie',type:'vieux',skin:SKIN.a,hair:'chignon',hc:'#d9d9d9',shirt:'#8e7cc3',glasses:true},
+  papy:{nom:'Papy',label:'Papy',type:'vieux',skin:SKIN.b,hair:'chauve',hc:'#e0e0e0',shirt:'#6d9eeb',glasses:true},
+  maman:{nom:'Maman',label:'Maman',type:'adulte',skin:SKIN.a,hair:'long',hc:'#6b3d1e',shirt:'#e06666'},
+  papa:{nom:'Papa',label:'Papa',type:'adulte',skin:SKIN.d,hair:'court',hc:'#151010',shirt:'#3d85c6'},
+  maitresse:{nom:'La maîtresse',label:'La maîtresse',type:'adulte',skin:SKIN.c,hair:'chignon',hc:'#1c120c',shirt:'#f6b26b',glasses:true},
+  bebe:{nom:'Petit frère',label:'Le petit frère',type:'petit',skin:SKIN.a,hair:'court',hc:'#e0b25a',shirt:'#93c47d'},
+};
+const EMOS={content:'content',triste:'triste',malade:'malade',fatigue:'fatigué',colere:'en colère',timide:'timide',surpris:'surpris',fier:'fier'};
+const DECORS={maison:'La maison',chambre:'Malade au lit',ecole:"L'école",parc:'Le parc',jeu:'Table de jeu'};
+
+function face(e){
+  // yeux, sourcils, bouche selon l'émotion ; coordonnées autour de la tête (0,0), rayon 26
+  let eyes='<circle cx="-9" cy="-2" r="3.2" fill="#1d1d1d"/><circle cx="9" cy="-2" r="3.2" fill="#1d1d1d"/>';
+  let brows='', mouth='<path d="M-9 9 Q0 17 9 9" stroke="#1d1d1d" stroke-width="2.6" fill="none" stroke-linecap="round"/>', extra='';
+  const cheeks='<circle cx="-15" cy="7" r="4" fill="#f28b9b" opacity=".45"/><circle cx="15" cy="7" r="4" fill="#f28b9b" opacity=".45"/>';
+  if(e==='triste'){brows='<path d="M-14 -7 L-5 -11 M14 -7 L5 -11" stroke="#1d1d1d" stroke-width="2.2" stroke-linecap="round"/>';mouth='<path d="M-8 14 Q0 7 8 14" stroke="#1d1d1d" stroke-width="2.6" fill="none" stroke-linecap="round"/>';extra='<path d="M-10 3 q-3 6 0 8 q3 -2 0 -8z" fill="#5bb7e8"/>';}
+  if(e==='malade'){eyes='<path d="M-12 -2 h6 M6 -2 h6" stroke="#1d1d1d" stroke-width="2.6" stroke-linecap="round"/>';mouth='<path d="M-6 12 Q0 9 6 12" stroke="#1d1d1d" stroke-width="2.4" fill="none" stroke-linecap="round"/>';extra='<rect x="-20" y="-20" width="16" height="7" rx="3" fill="#fff" stroke="#c9b28f" transform="rotate(-18)"/><circle cx="-15" cy="7" r="5" fill="#e86a6a" opacity=".5"/><circle cx="15" cy="7" r="5" fill="#e86a6a" opacity=".5"/><line x1="4" y1="11" x2="22" y2="20" stroke="#bbb" stroke-width="3" stroke-linecap="round"/><circle cx="22" cy="20" r="2.5" fill="#e05555"/>';return eyes+mouth+extra;}
+  if(e==='fatigue'){eyes='<path d="M-12 -1 q3 3 6 0 M6 -1 q3 3 6 0" stroke="#1d1d1d" stroke-width="2.4" fill="none" stroke-linecap="round"/>';mouth='<ellipse cx="0" cy="12" rx="4" ry="3" fill="#1d1d1d"/>';}
+  if(e==='colere'){brows='<path d="M-14 -11 L-5 -6 M14 -11 L5 -6" stroke="#1d1d1d" stroke-width="2.6" stroke-linecap="round"/>';mouth='<path d="M-8 13 Q0 8 8 13" stroke="#1d1d1d" stroke-width="2.6" fill="none" stroke-linecap="round"/>';extra='<circle cx="-15" cy="7" r="5" fill="#e04848" opacity=".45"/><circle cx="15" cy="7" r="5" fill="#e04848" opacity=".45"/>';return eyes+brows+mouth+extra;}
+  if(e==='timide'){eyes='<circle cx="-7" cy="1" r="3" fill="#1d1d1d"/><circle cx="11" cy="1" r="3" fill="#1d1d1d"/>';mouth='<path d="M-4 11 Q1 13 5 11" stroke="#1d1d1d" stroke-width="2.4" fill="none" stroke-linecap="round"/>';extra='<circle cx="-15" cy="7" r="5.5" fill="#f28b9b" opacity=".75"/><circle cx="15" cy="7" r="5.5" fill="#f28b9b" opacity=".75"/>';return eyes+mouth+extra;}
+  if(e==='surpris'){mouth='<ellipse cx="0" cy="12" rx="4.5" ry="5.5" fill="#1d1d1d"/>';brows='<path d="M-14 -11 q5 -4 9 -1 M14 -11 q-5 -4 -9 -1" stroke="#1d1d1d" stroke-width="2.2" fill="none" stroke-linecap="round"/>';}
+  if(e==='fier'){mouth='<path d="M-10 8 Q0 20 10 8 Z" fill="#1d1d1d"/>';eyes='<path d="M-12 -1 q3 -4 6 0 M6 -1 q3 -4 6 0" stroke="#1d1d1d" stroke-width="2.6" fill="none" stroke-linecap="round"/>';}
+  if(e==='content'){mouth='<path d="M-10 8 Q0 19 10 8" stroke="#1d1d1d" stroke-width="2.8" fill="none" stroke-linecap="round"/>';}
+  return eyes+brows+mouth+cheeks+extra;
+}
+function hair(h,c,back){
+  if(back){
+    if(h==='long')return `<path d="M-29 -8 Q-36 26 -30 42 Q-24 47 -15 42 Q-19 24 -20 6 Z" fill="${c}"/><path d="M29 -8 Q36 26 30 42 Q24 47 15 42 Q19 24 20 6 Z" fill="${c}"/>`;
+    return '';
+  }
+  switch(h){
+    case 'court':return `<path d="M-27 -6 Q-28 -32 0 -31 Q28 -32 27 -6 Q20 -20 0 -19 Q-18 -20 -27 -6Z" fill="${c}"/>`;
+    case 'long':return `<path d="M-28 0 Q-30 -32 0 -31 Q30 -32 28 0 Q22 -18 4 -20 Q-14 -16 -28 0Z" fill="${c}"/>`;
+    case 'couettes':return `<circle cx="-31" cy="-4" r="10" fill="${c}"/><circle cx="31" cy="-4" r="10" fill="${c}"/><path d="M-27 -4 Q-28 -32 0 -31 Q28 -32 27 -4 Q18 -20 0 -20 Q-18 -20 -27 -4Z" fill="${c}"/><circle cx="-24" cy="-10" r="3" fill="#e7738f"/><circle cx="24" cy="-10" r="3" fill="#e7738f"/>`;
+    case 'boucles':return `<g fill="${c}">${[-24,-14,-4,6,16,25].map((x,i)=>`<circle cx="${x}" cy="${-20-(i%2)*5}" r="10"/>`).join('')}<circle cx="-27" cy="-6" r="8"/><circle cx="27" cy="-6" r="8"/></g>`;
+    case 'chignon':return `<circle cx="0" cy="-34" r="12" fill="${c}"/><path d="M-27 -4 Q-28 -32 0 -31 Q28 -32 27 -4 Q18 -22 0 -20 Q-18 -22 -27 -4Z" fill="${c}"/>`;
+    case 'chauve':return `<path d="M-27 -2 Q-30 -14 -22 -18 L-20 -6Z M27 -2 Q30 -14 22 -18 L20 -6Z" fill="${c}"/>`;
+  }
+  return '';
+}
+function person(p,emo,opts={}){
+  // origine : pieds au centre (0,0). Taille selon le type.
+  const s=({enfant:.86,petit:.66,adulte:1.12,vieux:1.06}[p.type]||1)*(opts.k||1.18);
+  const legs=p.type==='petit'?'#7a9cc6':'#3f5f8a';
+  const wave=opts.wave;
+  const armR=opts.main?`<path d="M20 -86 Q30 -118 26 -150" stroke="${p.skin}" stroke-width="9" fill="none" stroke-linecap="round"/>`:wave?`<path d="M20 -86 Q38 -104 34 -126" stroke="${p.skin}" stroke-width="9" fill="none" stroke-linecap="round"/>`:`<path d="M20 -86 Q30 -62 26 -46" stroke="${p.skin}" stroke-width="9" fill="none" stroke-linecap="round"/>`;
+  const armL=`<path d="M-20 -86 Q-30 -62 -26 -46" stroke="${p.skin}" stroke-width="9" fill="none" stroke-linecap="round"/>`;
+  const glasses=p.glasses?'<g fill="none" stroke="#333" stroke-width="2"><circle cx="-9" cy="-2" r="7"/><circle cx="9" cy="-2" r="7"/><path d="M-2 -2h4"/></g>':'';
+  const lying=opts.lying;
+  const inner=`
+    <rect x="-14" y="-46" width="11" height="46" rx="5" fill="${legs}"/><rect x="3" y="-46" width="11" height="46" rx="5" fill="${legs}"/>
+    <ellipse cx="-9" cy="0" rx="10" ry="5" fill="#2d2d2d"/><ellipse cx="9" cy="0" rx="10" ry="5" fill="#2d2d2d"/>
+    ${armL}${armR}
+    <path d="M-24 -48 Q-26 -96 0 -98 Q26 -96 24 -48 Z" fill="${p.shirt}"/>
+    <g transform="translate(0,-126)">${hair(p.hair,p.hc,true)}<circle r="27" fill="${p.skin}"/>${hair(p.hair,p.hc)}<g>${face(emo)}</g>${glasses}</g>`;
+  const flip=opts.flip?' scale(-1,1)':'';
+  return `<g transform="translate(${opts.x},${opts.y}) scale(${s})${flip}"><g class="${opts.talk?'talk':''}">${inner}</g></g>`;
+}
+function decor(d){
+  const sky='#bfe7f3';
+  switch(d){
+    case 'parc':return `<rect width="600" height="340" fill="${sky}"/><circle cx="520" cy="60" r="30" fill="#ffd34d"/><ellipse cx="150" cy="70" rx="44" ry="16" fill="#fff"/><ellipse cx="185" cy="60" rx="30" ry="14" fill="#fff"/><rect y="250" width="600" height="90" fill="#8fd07a"/><rect x="62" y="150" width="14" height="110" fill="#8a5a33"/><circle cx="69" cy="140" r="46" fill="#4fae5b"/><circle cx="40" cy="160" r="30" fill="#5fbf6a"/><path d="M470 250 L470 170 L500 170 L560 250" fill="none" stroke="#e7738f" stroke-width="8"/><rect x="465" y="160" width="40" height="10" rx="4" fill="#e7738f"/>`;
+    case 'ecole':return `<rect width="600" height="340" fill="#fdf2d8"/><rect y="262" width="600" height="78" fill="#d9b48a"/><rect x="170" y="40" width="260" height="120" rx="8" fill="#2f5d50" stroke="#8a5a33" stroke-width="8"/><text x="300" y="110" font-family="Baloo 2,cursive" font-size="34" fill="#fff" text-anchor="middle" opacity=".9">A b c 1 2 3</text><rect x="30" y="60" width="90" height="70" rx="6" fill="#bfe7f3" stroke="#fff" stroke-width="6"/><rect x="480" y="60" width="90" height="70" rx="6" fill="#bfe7f3" stroke="#fff" stroke-width="6"/>`;
+    case 'chambre':return `<rect width="600" height="340" fill="#e8f3fb"/><rect y="270" width="600" height="70" fill="#c9dbe8"/><rect x="40" y="50" width="100" height="80" rx="6" fill="#fff" stroke="#9fc3dc" stroke-width="6"/><path d="M90 60 v60 M50 90 h80" stroke="#9fc3dc" stroke-width="4"/><rect x="330" y="150" width="240" height="120" rx="14" fill="#9fc3dc"/><rect x="330" y="120" width="20" height="150" rx="6" fill="#7aa6c4"/><rect x="550" y="150" width="20" height="120" rx="6" fill="#7aa6c4"/><ellipse cx="390" cy="160" rx="38" ry="18" fill="#fff"/><g transform="translate(215,70)"><rect x="-4" y="0" width="8" height="40" fill="#e05555"/><rect x="-20" y="16" width="40" height="8" fill="#e05555"/></g>`;
+    case 'jeu':return `<rect width="600" height="340" fill="#fdeee6"/><rect y="270" width="600" height="70" fill="#e6c3a5"/><rect x="190" y="200" width="220" height="16" rx="6" fill="#a8744f"/><rect x="205" y="214" width="12" height="60" fill="#a8744f"/><rect x="383" y="214" width="12" height="60" fill="#a8744f"/><rect x="230" y="182" width="140" height="18" rx="3" fill="#fff" stroke="#e7738f" stroke-width="3"/><circle cx="265" cy="176" r="6" fill="#3aa0d8"/><circle cx="335" cy="176" r="6" fill="#f4b400"/><rect x="292" y="168" width="14" height="14" rx="3" fill="#fff" stroke="#333"/><circle cx="299" cy="175" r="1.8" fill="#333"/>`;
+    default:return `<rect width="600" height="340" fill="#fdf2e4"/><rect y="270" width="600" height="70" fill="#d8b994"/><rect x="250" y="40" width="100" height="80" rx="6" fill="#bfe7f3" stroke="#fff" stroke-width="7"/><rect x="60" y="60" width="60" height="46" rx="4" fill="#f6d5dc" stroke="#c98a3c" stroke-width="4"/><circle cx="90" cy="83" r="10" fill="#f4b400"/><rect x="460" y="200" width="120" height="50" rx="14" fill="#7bc6c0"/><rect x="450" y="180" width="18" height="70" rx="8" fill="#5fb0a9"/>`;
+  }
+}
+function heart(x,y,d){return `<g transform="translate(${x},${y})"><path class="heart" style="animation-delay:${d}s" d="M0 6 C-10 -4 -18 4 0 16 C18 4 10 -4 0 6Z" fill="#e7738f"/></g>`;}
+function sceneSVG(sk,step,kidId){
+  const kid=KIDS.find(k=>k.id===kidId)||KIDS[0];
+  const oth=OTHERS[sk.autre]||OTHERS.copain;
+  const steps=sk.bulles||[];
+  const last=step>=steps.length-1;
+  const cur=steps[step]||{};
+  let emoO=last?(sk.emoFin||'content'):(sk.emoDebut||'content');
+  if(step<0) emoO=sk.emoDebut||'content';
+  const emoK=cur.emo||(last?'fier':'content');
+  const lying=sk.decor==='chambre';
+  let svg=`<svg viewBox="0 0 600 340" role="img" aria-label="${esc(sk.titre)}">${decor(sk.decor)}`;
+  svg+=person(kid,emoK,{x:170,y:300,talk:cur.qui==='enfant',wave:(sk.salut||cur.main)&&cur.qui==='enfant',main:cur.main&&cur.qui==='enfant',main:cur.main&&cur.qui==='enfant',main:cur.main&&cur.qui==='enfant'});
+  if(lying){
+    svg+=person(oth,emoO,{x:420,y:274,flip:true,talk:cur.qui==='autre'});
+    svg+=`<path d="M340 205 Q450 190 562 205 L562 268 L340 268Z" fill="#fff" stroke="#9fc3dc" stroke-width="4"/><path d="M350 225 h200 M350 245 h200" stroke="#cfe2ef" stroke-width="4"/>`;
+  } else {
+    svg+=person(oth,emoO,{x:430,y:300,flip:true,talk:cur.qui==='autre'});
+  }
+  if(last&&step>=0) svg+=heart(300,170,0)+heart(330,150,.6)+heart(275,140,1.2);
+  return svg+'</svg>';
+}
+function stageHTML(sk,step,kidId,prenom){
+  const steps=sk.bulles||[];
+  const cur=steps[step];
+  const oth=OTHERS[sk.autre]||OTHERS.copain;
+  let b='';
+  if(cur&&cur.texte){
+    const side=cur.qui==='enfant'?'l':'r';
+    const who=cur.qui==='enfant'?(prenom||'Moi'):oth.label;
+    b=`<div class="bubble ${side}" aria-live="polite"><small>${esc(who)}</small>${esc(cur.texte)}</div>`;
+  }
+  return sceneSVG(sk,step,kidId)+b;
+}
+
+/* ---------- Données de départ ---------- */
+const EXAMPLES=[
+ {id:'nouvelles',domaine:'ecoute',titre:'Demander des nouvelles',quand:"Quand quelqu'un a été malade ou à l'hôpital.",dire:'« Comment tu te sens ? Ça va mieux ? »',
+  pourquoi:"Quand on est malade, on est fatigué et on se sent parfois un peu seul. Si quelqu'un demande de nos nouvelles, on sent qu'il pense à nous. Ça fait du bien, comme un petit pansement pour le cœur.",
+  astuce:"Le jour d'avant, prévenez-le : « Demain on va voir Mamie, elle sort de l'hôpital. Qu'est-ce que tu pourrais lui demander ? » Pour un copain absent à l'école : « Tu étais malade ? Ça va mieux ? »",
+  decor:'chambre',autre:'mamie',emoDebut:'malade',emoFin:'content',stage:1,
+  bulles:[{qui:'enfant',texte:"Bonjour Mamie ! Tu étais à l'hôpital… Comment tu te sens ?"},{qui:'autre',texte:'Encore un peu fatiguée, mais ça va mieux.'},{qui:'enfant',texte:"Ça me fait plaisir que ça aille mieux. Je t'ai fait un dessin !"},{qui:'autre',texte:'Merci mon cœur, ça me fait tellement plaisir !'}]},
+ {id:'interesser',domaine:'verbal',titre:"S'intéresser aux autres",quand:"Quand je retrouve un copain ou quelqu'un de ma famille.",dire:'« Et toi, qu’est-ce que tu as fait ? » « Qu’est-ce que tu aimes, toi ? »',
+  pourquoi:"Quand je pose une question à l'autre, il sent qu'il compte pour moi. Je découvre plein de choses sur lui, et on devient encore plus copains. Parler, c'est comme jouer à la balle : je la lance, puis je la renvoie !",
+  astuce:"Jouez à « la balle qui parle » : celui qui reçoit la balle pose une question à l'autre. À table, chacun pose une question à son voisin sur sa journée. Et félicitez-le dès qu'il s'intéresse à quelqu'un : « Tu as vu comme il était content de te raconter ? »",
+  decor:'parc',autre:'copain',emoDebut:'content',emoFin:'content',stage:0,
+  bulles:[{qui:'enfant',texte:'Moi, ce week-end, j’ai fait de la piscine !'},{qui:'enfant',texte:'Et toi, qu’est-ce que tu as fait ?',emo:'surpris'},{qui:'autre',texte:'Je suis allé chez mon papy, à la ferme. Il y avait des lapins !'},{qui:'enfant',texte:'Trop bien ! Ils s’appellent comment ?'},{qui:'autre',texte:'Caramel et Noisette ! Merci de me demander.'}]},
+ {id:'bonjour',domaine:'verbal',titre:'Dire bonjour et au revoir',quand:"Quand j'arrive quelque part ou quand je pars.",dire:'Je regarde la personne, je souris : « Bonjour ! »',
+  pourquoi:"« Bonjour », ça veut dire « bon jour » : je souhaite vraiment à l'autre que sa journée soit bonne. C'est comme un petit cadeau avec des mots ! Et « au revoir », c'est dire : « J'ai hâte de te revoir. » Avec le regard et le sourire, la personne sent que je le pense vraiment.",
+  astuce:"S'il est timide, commencez petit : un signe de la main ou un sourire compte déjà. On ne force pas le bisou.",
+  decor:'ecole',autre:'maitresse',emoDebut:'content',emoFin:'content',stage:0,salut:true,
+  bulles:[{qui:'enfant',texte:'Bonjour maîtresse !',emo:'content'},{qui:'autre',texte:'Bonjour ! Je suis contente de te voir ce matin.'},{qui:'enfant',texte:'Moi aussi !'}]},
+ {id:'humeur',domaine:'nonverbal',titre:'Commencer la journée de bonne humeur',quand:"Le matin, quand je me réveille et que je retrouve ma famille.",dire:'Je fais un effort : un sourire et « Bonjour ! », même si j’ai encore un peu sommeil.',
+  pourquoi:"Le matin, la bonne humeur, c'est comme un rayon de soleil : elle se partage ! Si je souris et que je dis bonjour, toute la famille commence bien la journée. Et si je suis grognon, je peux le dire gentiment : « J'ai besoin d'un câlin. »",
+  astuce:"Un réveil en douceur aide beaucoup : de la lumière, un câlin et assez de temps pour ne pas se presser. Il a le droit d'être fatigué : on lui demande un effort (un sourire, un bonjour), pas d'être joyeux à tout prix. Une étoile pour chaque matin réussi !",
+  decor:'maison',autre:'maman',emoDebut:'content',emoFin:'content',stage:0,
+  bulles:[{qui:'autre',texte:'Bonjour mon cœur ! Tu as bien dormi ?'},{qui:'enfant',texte:'(J’ai encore un peu sommeil… mais je fais un effort.)',emo:'fatigue'},{qui:'enfant',texte:'Bonjour Maman ! Oui, j’ai bien dormi.',emo:'content'},{qui:'autre',texte:'Ton sourire, ça me fait plaisir pour toute la journée !'}]},
+ {id:'tour',domaine:'relations',titre:'Attendre son tour',quand:'Quand on joue à un jeu ou quand quelqu’un parle.',dire:'« C’est à toi, après c’est à moi. »',
+  pourquoi:"Si tout le monde joue en même temps, le jeu ne marche plus. Attendre, c'est difficile, mais ça veut dire que chacun aura sa place. Et ton tour arrive toujours !",
+  astuce:"Utilisez un objet « tour de rôle » (une peluche, un sablier). Celui qui l'a, c'est son tour. Les jeux de société courts sont parfaits pour s'entraîner.",
+  decor:'jeu',autre:'copine',emoDebut:'content',emoFin:'content',stage:0,
+  bulles:[{qui:'autre',texte:"J'ai fait 4 ! Je peux jouer ?"},{qui:'enfant',texte:"Oui, c'est à toi. Après, c'est à moi.",emo:'content'},{qui:'autre',texte:'Merci ! À toi maintenant !'}]},
+ {id:'jouer',domaine:'relations',titre:'Demander pour jouer',quand:'Quand je veux jouer avec des enfants qui jouent déjà.',dire:'« Je peux jouer avec vous ? »',
+  pourquoi:"Si je prends le jeu sans demander, les autres peuvent être fâchés. Si je demande, ils peuvent dire oui. Et s'ils disent « pas maintenant », je peux demander plus tard ou jouer avec quelqu'un d'autre.",
+  astuce:"Entraînez-le aussi à la réponse « non » : on se dit « ce n'est pas grave », on propose autre chose ou on réessaie un peu plus tard.",
+  decor:'parc',autre:'copain',emoDebut:'surpris',emoFin:'content',stage:0,
+  bulles:[{qui:'enfant',texte:'Je peux jouer au ballon avec vous ?'},{qui:'autre',texte:'Oui ! Tu peux être dans mon équipe.'},{qui:'enfant',texte:'Super, merci !',emo:'fier'}]},
+ {id:'consoler',domaine:'emotions',titre:"Consoler quelqu'un qui est triste",quand:"Quand je vois quelqu'un pleurer ou avoir l'air triste.",dire:'« Ça va ? Tu veux que je reste avec toi ? »',
+  pourquoi:"Quand on est triste, on se sent tout petit. Un copain qui vient à côté de nous, ça réchauffe. On n'a pas besoin de tout réparer : être là, c'est déjà beaucoup.",
+  astuce:"Apprenez-lui à regarder le visage : yeux mouillés, bouche vers le bas, tête baissée. « Comment tu sais qu'il est triste ? »",
+  decor:'parc',autre:'copine',emoDebut:'triste',emoFin:'content',stage:0,
+  bulles:[{qui:'enfant',texte:'Ça va ? Tu as l’air triste.'},{qui:'autre',texte:'Je suis tombée et je me suis fait mal…'},{qui:'enfant',texte:'Tu veux que je reste avec toi ? On va le dire à la maîtresse.'},{qui:'autre',texte:'Oui. Merci, ça va mieux.'}]},
+ {id:'merci',domaine:'verbal',titre:'Dire merci',quand:"Quand quelqu'un me donne quelque chose ou m'aide.",dire:'« Merci ! » en regardant la personne.',
+  pourquoi:"Dire merci, c'est montrer à l'autre qu'on a remarqué sa gentillesse. Il a envie de recommencer, et tout le monde se sent bien.",
+  astuce:"Remerciez-le souvent vous aussi, pour de petites choses : il apprend en vous imitant.",
+  decor:'maison',autre:'papy',emoDebut:'content',emoFin:'content',stage:0,
+  bulles:[{qui:'autre',texte:"Tiens, je t'ai réparé ton vélo."},{qui:'enfant',texte:'Merci Papy ! Tu es trop fort !'},{qui:'autre',texte:'Avec plaisir !'}]},
+ {id:'pardon',domaine:'conflits',titre:'Dire pardon et réparer',quand:"Quand j'ai fait mal ou de la peine à quelqu'un, même sans faire exprès.",dire:'« Pardon. Je peux t’aider ? »',
+  pourquoi:"Tout le monde fait des erreurs. Dire pardon, c'est dire : « Je vois que ça t'a embêté ou que ça t'a fait de la peine. » Et aider à réparer, ça montre qu'on le pense vraiment.",
+  astuce:"Laissez-lui un moment pour se calmer avant de demander le pardon. Un geste pour réparer (ramasser, reconstruire, un dessin) compte autant que les mots.",
+  decor:'maison',autre:'bebe',emoDebut:'triste',emoFin:'content',stage:0,
+  bulles:[{qui:'autre',texte:'Ma tour est tombée ! Tu l’as cassée !'},{qui:'enfant',texte:"Pardon, je n'ai pas fait exprès.",emo:'triste'},{qui:'enfant',texte:'Viens, on la reconstruit ensemble.'},{qui:'autre',texte:'Oui ! Encore plus haute !'}]},
+ {id:'ecouter',domaine:'ecoute',titre:'Écouter sans couper la parole',quand:"Quand quelqu'un est en train de parler.",dire:'Je regarde, j’attends qu’il ait fini, puis je parle.',
+  pourquoi:"Quand on nous coupe la parole, on a l'impression que ce qu'on dit n'est pas important. Si j'attends, l'autre se sent écouté. Et après, il m'écoutera aussi.",
+  astuce:"Proposez un signe secret : il pose la main sur votre bras pour dire « j'ai quelque chose à dire », et vous lui répondez dès que possible.",
+  decor:'maison',autre:'maman',emoDebut:'content',emoFin:'content',stage:0,
+  bulles:[{qui:'autre',texte:'Aujourd’hui, au travail, j’ai vu un chien rigolo…'},{qui:'enfant',texte:'(J’attends qu’elle ait fini…)',emo:'timide'},{qui:'enfant',texte:'Et moi, je peux te raconter mon histoire ?'},{qui:'autre',texte:'Oui ! Merci de m’avoir écoutée.'}]},
+ {id:'penser',domaine:'contexte',titre:'Penser avant de parler',quand:"Quand je remarque quelque chose sur quelqu'un.",dire:'Je garde mon idée dans ma tête, et j’en parle plus tard à Papa ou Maman, tout bas.',
+  pourquoi:"Dans ma tête, j'ai le droit de penser plein de choses. Mais certains mots, dits tout haut, peuvent faire de la peine. Avant de parler, je me demande : « Est-ce que ça peut le rendre triste ? » Si oui, je garde mon idée, et j'en parle plus tard à Papa ou Maman.",
+  astuce:"Jouez au « feu tricolore » : rouge, je m'arrête ; orange, je me demande si ça peut faire de la peine ; vert, je parle (ou j'attends d'être seul avec un parent). Quand il vous pose sa question plus tard, répondez simplement : chacun est différent, et on n'en parle pas devant la personne.",
+  decor:'parc',autre:'maman',emoDebut:'content',emoFin:'content',stage:0,
+  bulles:[{qui:'enfant',texte:'(Dans ma tête : « Oh, ce monsieur a un très gros ventre ! »)',emo:'surpris'},{qui:'enfant',texte:'(Je ne le dis pas tout haut : ça pourrait lui faire de la peine.)',emo:'timide'},{qui:'enfant',texte:'Maman, à la maison, je pourrai te poser une question ?'},{qui:'autre',texte:'Bien sûr ! Bravo, tu as gardé ton idée dans ta tête.'}]},
+ {id:'consignes',domaine:'ecoute',titre:'Écouter les consignes des parents',quand:"Quand Papa ou Maman me demande de faire quelque chose.",dire:'Je m’arrête, je regarde, j’écoute, puis : « D’accord ! » et je le fais.',
+  pourquoi:"Les parents donnent des consignes pour que tout le monde soit en sécurité et que la journée se passe bien. Quand j'écoute dès la première fois, on n'a pas besoin de se fâcher, et il reste plus de temps pour jouer !",
+  astuce:"Approchez-vous, mettez-vous à sa hauteur et attendez son regard avant de parler. Une seule consigne à la fois, courte, puis demandez-lui de la redire : « Qu'est-ce que je t'ai demandé ? » Et félicitez-le dès que c'est fait.",
+  decor:'maison',autre:'papa',emoDebut:'content',emoFin:'fier',stage:0,
+  bulles:[{qui:'autre',texte:"C'est l'heure de ranger tes jouets, s'il te plaît."},{qui:'enfant',texte:'(Je m’arrête, je regarde Papa et j’écoute.)',emo:'timide'},{qui:'enfant',texte:"D'accord Papa, je range !",emo:'content'},{qui:'autre',texte:'Merci ! Tu m’as écouté du premier coup. On joue ensemble après ?'}]},
+ {id:'doigt',domaine:'contexte',titre:'Lever le doigt en classe',quand:"Quand je veux parler ou répondre en classe.",dire:'Je lève le doigt et j’attends que la maîtresse me donne la parole.',
+  pourquoi:"En classe, on est beaucoup ! Si tout le monde parle en même temps, personne ne s'entend et ça gêne les copains qui réfléchissent. Quand je lève le doigt et que j'attends, la maîtresse donne la parole à chacun son tour, et tout le monde peut être écouté.",
+  astuce:"Jouez à « la classe » à la maison avec des peluches : on lève le doigt avant de parler. S'il a peur d'oublier son idée en attendant, apprenez-lui à la répéter tout bas dans sa tête.",
+  decor:'ecole',autre:'maitresse',emoDebut:'content',emoFin:'content',stage:0,
+  bulles:[{qui:'autre',texte:'Qui sait combien font 2 plus 2 ?'},{qui:'enfant',texte:'(Je lève le doigt et j’attends, sans parler.)',emo:'content',main:true},{qui:'autre',texte:'Oui, vas-y, je t’écoute.'},{qui:'enfant',texte:'Ça fait 4 !',emo:'fier',main:true},{qui:'autre',texte:'Bravo ! Et merci d’avoir levé le doigt.'}]},
+ {id:'preter',domaine:'relations',titre:'Prêter et partager',quand:"Quand un copain voudrait jouer avec mon jouet.",dire:'« Tiens, on joue chacun un peu. »',
+  pourquoi:"Quand je prête, l'autre est content et on peut jouer ensemble. Mon jouet reste à moi : il revient après. On peut aussi décider ensemble de qui joue en premier.",
+  astuce:"Avant que les copains arrivent, laissez-le ranger un ou deux jouets très précieux. Les autres, on les partage.",
+  decor:'maison',autre:'copain',emoDebut:'triste',emoFin:'content',stage:0,
+  bulles:[{qui:'autre',texte:'Moi aussi je voudrais jouer avec la voiture…'},{qui:'enfant',texte:'Tiens, tu la prends un peu. Après tu me la rends.'},{qui:'autre',texte:'Merci ! On fait la course ?'}]},
+ {id:'perdre',domaine:'relations',titre:'Accepter de perdre',quand:"Quand je perds à un jeu.",dire:'« Bravo ! On refait une partie ? »',
+  pourquoi:"Perdre, ça peut rendre triste ou fâché, c'est normal. Mais si je me fâche, plus personne n'a envie de jouer. Si je dis bravo, on peut rejouer et je peux gagner la prochaine fois.",
+  astuce:"Jouez souvent à des jeux courts. Laissez-le perdre parfois, et montrez-lui comment vous, vous perdez : « Zut ! Bravo à toi. On rejoue ? »",
+  decor:'jeu',autre:'papa',emoDebut:'content',emoFin:'content',stage:0,
+  bulles:[{qui:'autre',texte:"J'ai gagné !"},{qui:'enfant',texte:"Oh non… ça m'énerve un peu.",emo:'colere'},{qui:'enfant',texte:'Bravo Papa ! On refait une partie ?',emo:'content'},{qui:'autre',texte:'Oui ! Tu as très bien joué.'}]},
+ {"id": "regard", "domaine": "nonverbal", "titre": "Regarder la personne qui me parle", "quand": "Quand quelqu'un me parle, ou quand je parle à quelqu'un.", "dire": "Je tourne ma tête et mes yeux vers la personne.", "pourquoi": "Mes yeux disent à l'autre : « Je suis avec toi, je t'écoute. » Si je regarde ailleurs, il peut croire que ce qu'il dit ne m'intéresse pas. Pas besoin de le fixer : regarder son visage, c'est déjà très bien.", "astuce": "Si le regard dans les yeux est difficile pour lui, proposez-lui de regarder le nez ou le front : ça compte aussi. Jouez au « jeu du miroir » : face à face, il imite vos grimaces et vos sourires.", "decor": "maison", "autre": "papy", "emoDebut": "content", "emoFin": "content", "stage": 0, "bulles": [{"qui": "autre", "texte": "Tu sais, quand j'étais petit, j'avais un chien qui s'appelait Pompon."}, {"qui": "enfant", "texte": "(Je regarde Papy pendant qu'il parle.)"}, {"qui": "enfant", "texte": "C'est vrai ? Il était comment ?", "emo": "surpris"}, {"qui": "autre", "texte": "Tout blanc ! Tu m'écoutes si bien, ça me fait plaisir."}]},
+ {"id": "bulle", "domaine": "nonverbal", "titre": "Respecter la bulle de l'autre", "quand": "Quand je m'approche de quelqu'un, ou quand j'ai envie de faire un câlin.", "dire": "Je reste à un bras de distance, et je demande : « Je peux te faire un câlin ? »", "pourquoi": "Chacun a une bulle invisible autour de lui. Si je viens trop près, ou si je touche sans demander, l'autre peut être gêné. Mon corps est à moi, son corps est à lui : on demande avant de toucher, et on a le droit de dire non.", "astuce": "Montrez la « bulle » avec un cerceau ou les bras tendus. Et respectez aussi la sienne : on ne force jamais un bisou, même à la famille.", "decor": "parc", "autre": "copine", "emoDebut": "content", "emoFin": "content", "stage": 0, "bulles": [{"qui": "enfant", "texte": "Je peux te faire un câlin ?"}, {"qui": "autre", "texte": "Pas maintenant, je préfère pas."}, {"qui": "enfant", "texte": "D'accord ! On se tape dans la main ?"}, {"qui": "autre", "texte": "Oui ! Tope là !"}]},
+ {"id": "aide", "domaine": "verbal", "titre": "Demander de l'aide", "quand": "Quand je n'y arrive pas, ou quand je n'ai pas compris.", "dire": "« Tu peux m'aider, s'il te plaît ? » « Je n'ai pas compris, tu peux répéter ? »", "pourquoi": "Demander de l'aide, ce n'est pas être nul, c'est être malin ! Tout le monde a besoin d'aide parfois, même les grands. Si je demande, j'apprends plus vite, et mon problème devient plus petit.", "astuce": "Montrez-lui que vous aussi, vous demandez de l'aide. Quand il bloque, attendez quelques secondes avant d'intervenir, pour lui laisser le temps de demander.", "decor": "ecole", "autre": "maitresse", "emoDebut": "content", "emoFin": "content", "stage": 0, "bulles": [{"qui": "enfant", "texte": "(Je n'ai pas compris l'exercice…)", "emo": "triste"}, {"qui": "enfant", "texte": "Maîtresse, je n'ai pas compris. Tu peux m'aider, s'il te plaît ?", "main": true}, {"qui": "autre", "texte": "Bien sûr ! Bravo d'avoir demandé."}, {"qui": "enfant", "texte": "Ah, j'ai compris !", "emo": "fier"}]},
+ {"id": "ressens", "domaine": "emotions", "titre": "Dire ce que je ressens", "quand": "Quand je sens une émotion dans mon corps : de la tristesse, de la colère, de la peur ou de la joie.", "dire": "« Je suis triste parce que… » « Je suis en colère parce que… »", "pourquoi": "Les émotions, c'est comme la météo dans mon corps : il y a du soleil, de la pluie, de l'orage. Toutes les émotions ont le droit d'exister. Quand je mets des mots dessus, les autres comprennent ce qui m'arrive et peuvent m'aider.", "astuce": "Nommez vos propres émotions devant lui : « J'ai de la colère, j'ai besoin de respirer. » Le soir, demandez-lui : « Quelle était ta météo aujourd'hui ? »", "decor": "maison", "autre": "maman", "emoDebut": "content", "emoFin": "content", "stage": 0, "bulles": [{"qui": "autre", "texte": "Tu as une petite mine. Qu'est-ce qui se passe ?"}, {"qui": "enfant", "texte": "Je suis triste parce que Léa ne voulait pas jouer avec moi.", "emo": "triste"}, {"qui": "autre", "texte": "Merci de me le dire. Tu veux un câlin ?"}, {"qui": "enfant", "texte": "Oui. Ça va un peu mieux.", "emo": "content"}]},
+ {"id": "calme", "domaine": "emotions", "titre": "Me calmer quand je suis en colère", "quand": "Quand la colère monte et que j'ai envie de crier ou de taper.", "dire": "Je m'arrête, je souffle doucement comme sur des bougies, et je compte jusqu'à 5.", "pourquoi": "La colère, c'est comme un volcan : elle monte, elle monte… Si elle explose, je peux faire mal ou casser quelque chose. Quand je respire doucement, le volcan se calme. Après, je peux dire avec des mots ce qui ne va pas.", "astuce": "Entraînez-vous à respirer quand tout va bien (souffler sur une plume, sur des bougies imaginaires). Préparez ensemble un coin calme avec un coussin. Pendant la colère, peu de mots : restez près de lui.", "decor": "maison", "autre": "bebe", "emoDebut": "content", "emoFin": "content", "stage": 0, "bulles": [{"qui": "autre", "texte": "C'est à moi ! Je prends ta voiture !"}, {"qui": "enfant", "texte": "(Grrr… la colère monte !)", "emo": "colere"}, {"qui": "enfant", "texte": "(Je souffle doucement… 1, 2, 3, 4, 5.)", "emo": "timide"}, {"qui": "enfant", "texte": "Rends-la-moi, s'il te plaît. Tu peux prendre le camion.", "emo": "content"}]},
+ {"id": "non", "domaine": "affirmation", "titre": "Dire non gentiment", "quand": "Quand on me propose quelque chose dont je n'ai pas envie, ou qui n'est pas permis.", "dire": "« Non merci, je n'ai pas envie. » en regardant la personne, avec une voix calme.", "pourquoi": "J'ai le droit de dire non ! Dire non gentiment, c'est être fort sans faire de peine : je dis ce que je veux, et je reste aimable avec l'autre. Et si l'autre insiste, je peux aller voir un adulte.", "astuce": "Jouez la scène avec des peluches : une peluche insiste, il répète son « non » calmement. Félicitez chaque « non » dit poliment, même quand il vous est adressé.", "decor": "parc", "autre": "copain", "emoDebut": "content", "emoFin": "content", "stage": 0, "bulles": [{"qui": "autre", "texte": "Viens, on grimpe tout en haut du mur, c'est trop drôle !"}, {"qui": "enfant", "texte": "Non merci, c'est dangereux. Je n'ai pas envie.", "emo": "timide"}, {"qui": "autre", "texte": "Bon… d'accord. On fait du toboggan, alors ?"}, {"qui": "enfant", "texte": "Oui, ça, je veux bien !", "emo": "content"}]},
+ {"id": "moqueries", "domaine": "affirmation", "titre": "Réagir aux moqueries", "quand": "Quand quelqu'un se moque de moi ou me dit des mots méchants.", "dire": "« Arrête, ça ne me fait pas rire. » avec une voix forte et calme. Puis je m'éloigne et je le dis à un adulte.", "pourquoi": "Personne n'a le droit de se moquer de moi. Je peux parler fort et clair, sans crier et sans taper. Puis je m'en vais, et je le dis à un adulte : ce n'est pas rapporter, c'est me protéger.", "astuce": "Entraînez la « voix du dragon calme » : forte, posée, en regardant l'autre. Écoutez-le toujours quand il vous raconte une moquerie, et prévenez l'école si ça se répète.", "decor": "parc", "autre": "copain", "emoDebut": "content", "emoFin": "content", "stage": 0, "bulles": [{"qui": "autre", "texte": "Hé, ton dessin, il est trop nul !"}, {"qui": "enfant", "texte": "Arrête, ça ne me fait pas rire.", "emo": "colere"}, {"qui": "enfant", "texte": "(Je m'en vais, et je vais le dire à la maîtresse.)"}, {"qui": "autre", "texte": "Bon… pardon. Il est bien, en fait, ton dessin."}]},
+ {"id": "compliment", "domaine": "affirmation", "titre": "Faire un compliment", "quand": "Quand quelqu'un a fait quelque chose de beau, de gentil ou de difficile.", "dire": "« Bravo, ton dessin est super ! » « Tu cours drôlement vite ! »", "pourquoi": "Un compliment, c'est un petit cadeau qui ne coûte rien. L'autre se sent fier et content. Et quand on me fait un compliment, je peux simplement dire « Merci ! »", "astuce": "Le soir, faites le « tour des compliments » : chacun en dit un à quelqu'un de la famille. Montrez l'exemple avec des compliments précis.", "decor": "ecole", "autre": "copine", "emoDebut": "surpris", "emoFin": "content", "stage": 0, "bulles": [{"qui": "enfant", "texte": "Ton dessin de château, il est trop beau !"}, {"qui": "autre", "texte": "C'est vrai ? Merci !"}, {"qui": "enfant", "texte": "Tu m'apprendras à dessiner les tours ?"}, {"qui": "autre", "texte": "Oui ! Viens à côté de moi."}]},
+ {"id": "solution", "domaine": "conflits", "titre": "Chercher une solution ensemble", "quand": "Quand on n'est pas d'accord, ou qu'on veut la même chose.", "dire": "« On n'est pas d'accord. Qu'est-ce qu'on pourrait faire ? »", "pourquoi": "Quand on se dispute, chacun tire de son côté, comme sur une corde. Si on cherche une idée ensemble, tout le monde peut gagner : chacun son tour, on partage, on invente un autre jeu… Un problème, c'est une énigme à résoudre à deux.", "astuce": "Aidez-le à trouver 2 ou 3 idées, puis à choisir avec l'autre. Pierre-feuille-ciseaux aide beaucoup pour décider qui commence.", "decor": "maison", "autre": "copine", "emoDebut": "colere", "emoFin": "content", "stage": 0, "bulles": [{"qui": "autre", "texte": "Moi, je veux jouer à la marchande !"}, {"qui": "enfant", "texte": "Et moi, aux voitures… Qu'est-ce qu'on pourrait faire ?"}, {"qui": "autre", "texte": "On fait un magasin de voitures !"}, {"qui": "enfant", "texte": "Super idée ! On joue ensemble.", "emo": "fier"}]},
+ {"id": "changement", "domaine": "contexte", "titre": "Accepter un changement", "quand": "Quand ce qui était prévu change : la sortie est annulée, il pleut, on part plus tôt…", "dire": "« Oh, c'est dommage… Qu'est-ce qu'on fait à la place ? »", "pourquoi": "Parfois, les choses ne se passent pas comme prévu. C'est normal d'être déçu. Mais si je cherche une autre idée, la journée peut quand même être chouette. C'est le super-pouvoir de l'élastique : je m'adapte !", "astuce": "Prévenez des changements dès que possible et expliquez pourquoi. Un planning en images aide à voir la journée, et on peut y montrer ce qui change.", "decor": "maison", "autre": "papa", "emoDebut": "content", "emoFin": "content", "stage": 0, "bulles": [{"qui": "autre", "texte": "Il pleut trop, on ne peut pas aller au parc aujourd'hui."}, {"qui": "enfant", "texte": "Oh non… j'avais trop envie.", "emo": "triste"}, {"qui": "enfant", "texte": "Bon… qu'est-ce qu'on fait à la place ?"}, {"qui": "autre", "texte": "Une cabane avec des coussins ? Bravo, tu t'adaptes !"}]},
+];
+const DOMAINES={
+ nonverbal:{nom:'Communication non verbale',court:'Le corps qui parle',c:'#e7738f'},
+ verbal:{nom:'Communication verbale',court:'Les mots',c:'#3aa0d8'},
+ ecoute:{nom:"Écoute et compréhension de l'autre",court:'Écouter',c:'#2fb39a'},
+ emotions:{nom:'Émotions',court:'Émotions',c:'#f4b400'},
+ relations:{nom:'Relations et coopération',court:'Jouer ensemble',c:'#9b6bd0'},
+ affirmation:{nom:'Affirmation de soi',court:'Oser',c:'#e06666'},
+ conflits:{nom:'Gestion des conflits',court:'Les disputes',c:'#f08a3c'},
+ contexte:{nom:'Adaptation au contexte',court:"S'adapter",c:'#0e6b74'},
+ perso:{nom:'Mes cartes à moi',court:'Mes cartes',c:'#8a5a33'}};
+const DOM_ORDER=Object.keys(DOMAINES);
+function domOf(s){const d=s.domaine||(EXAMPLES.find(e=>e.id===s.id)||{}).domaine;return DOMAINES[d]?d:'perso';}
+const DAYS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+
+let state;
+function fresh(){return {prenom:'',kid:'g1',skills:JSON.parse(JSON.stringify(EXAMPLES)),stars:{}};}
+const OLD_TEXTS={penser:"Dans ma tête, j'ai le droit de penser plein de choses. Mais certains mots dits tout haut peuvent faire de la peine, surtout sur le corps de quelqu'un. Avant de parler, je me demande : « Est-ce que ça peut le rendre triste ? » Si oui, je garde mon idée, et j'en parle plus tard à Papa ou Maman.",pardon:"Tout le monde fait des erreurs. Dire pardon, c'est dire : « Je vois que tu as eu mal. » Et aider à réparer, ça montre qu'on le pense vraiment.",bonjour:"Dire bonjour, c'est dire à l'autre : « Je t'ai vu, tu comptes pour moi. » Avec le regard et le sourire, la personne se sent accueillie."};
+function migrate(s){if(!s.added_v3){["regard", "bulle", "aide", "ressens", "calme", "non", "moqueries", "compliment", "solution", "changement"].forEach(id=>{if(!s.skills.some(k=>k.id===id)){const ex=EXAMPLES.find(e=>e.id===id);if(ex)s.skills.push(JSON.parse(JSON.stringify(ex)));}});s.added_v3=true;}s.skills.forEach(k=>{if(k.id==='penser'&&JSON.stringify(k.bulles||[]).includes('il est bizarre')){const ex=EXAMPLES.find(e=>e.id==='penser');k.bulles=JSON.parse(JSON.stringify(ex.bulles));}});if(!s.added_penser){if(!s.skills.some(k=>k.id==='penser')){const ex=EXAMPLES.find(e=>e.id==='penser');let i=s.skills.findIndex(k=>k.id==='ecouter');s.skills.splice(i<0?s.skills.length:i+1,0,JSON.parse(JSON.stringify(ex)));}s.added_penser=true;}if(!s.added_interesser){if(!s.skills.some(k=>k.id==='interesser')){const ex=EXAMPLES.find(e=>e.id==='interesser');let i=s.skills.findIndex(k=>k.id==='nouvelles');s.skills.splice(i<0?s.skills.length:i+1,0,JSON.parse(JSON.stringify(ex)));}s.added_interesser=true;}if(!s.added_humeur){if(!s.skills.some(k=>k.id==='humeur')){const ex=EXAMPLES.find(e=>e.id==='humeur');let i=s.skills.findIndex(k=>k.id==='bonjour');s.skills.splice(i<0?s.skills.length:i+1,0,JSON.parse(JSON.stringify(ex)));}s.added_humeur=true;}if(!s.added_doigt){if(!s.skills.some(k=>k.id==='doigt')){const ex=EXAMPLES.find(e=>e.id==='doigt');let i=s.skills.findIndex(k=>k.id==='consignes');if(i<0)i=s.skills.findIndex(k=>k.id==='ecouter');s.skills.splice(i<0?s.skills.length:i+1,0,JSON.parse(JSON.stringify(ex)));}s.added_doigt=true;}if(!s.added_consignes){if(!s.skills.some(k=>k.id==='consignes')){const ex=EXAMPLES.find(e=>e.id==='consignes');const i=s.skills.findIndex(k=>k.id==='ecouter');s.skills.splice(i<0?s.skills.length:i+1,0,JSON.parse(JSON.stringify(ex)));}s.added_consignes=true;}s.skills.forEach(k=>{const ex=EXAMPLES.find(e=>e.id===k.id);if(ex&&OLD_TEXTS[k.id]&&k.pourquoi===OLD_TEXTS[k.id]){k.pourquoi=ex.pourquoi;k.quand=ex.quand;k.astuce=ex.astuce;}});return s;}
+function load(){try{const r=localStorage.getItem(KEY);if(r){const s=JSON.parse(r);if(s&&Array.isArray(s.skills))return migrate(Object.assign(fresh(),s));}}catch(e){}return fresh();}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}refreshCode();}
+state=load();
+
+function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2200);}
+
+/* ---------- Icônes ---------- */
+function plant(stage,size=40){
+  if(stage===0)return `<ellipse cx="20" cy="33" rx="13" ry="4" fill="#a8744f"/><ellipse cx="20" cy="27" rx="5" ry="7" fill="#c98a3c"/><path d="M20 21 q2 -5 6 -6" stroke="#2f8f5b" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+  if(stage===1)return `<ellipse cx="20" cy="35" rx="13" ry="4" fill="#a8744f"/><path d="M20 35 V16" stroke="#2f8f5b" stroke-width="3" stroke-linecap="round"/><path d="M20 22 Q8 20 8 10 Q18 10 20 22Z M20 18 Q32 16 32 6 Q22 6 20 18Z" fill="#5fbf6a"/>`;
+  return `<ellipse cx="20" cy="37" rx="14" ry="3.5" fill="#a8744f"/><rect x="17" y="22" width="6" height="15" rx="2" fill="#8a5a33"/><circle cx="20" cy="15" r="12" fill="#4fae5b"/><circle cx="11" cy="20" r="7" fill="#5fbf6a"/><circle cx="29" cy="20" r="7" fill="#5fbf6a"/><circle cx="15" cy="12" r="2.2" fill="#e7738f"/><circle cx="26" cy="15" r="2.2" fill="#e7738f"/>`;
+}
+const STAR_ON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.5L12 17.2l-5.9 3.2 1.3-6.5L2.5 9.3l6.6-.8z" fill="#f4b400" stroke="#c98a00" stroke-width="1.2" stroke-linejoin="round"/></svg>';
+const STAR_OFF='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.5L12 17.2l-5.9 3.2 1.3-6.5L2.5 9.3l6.6-.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" opacity=".35"/></svg>';
+const PLAY='<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 2l9 5-9 5z" fill="currentColor"/></svg>';
+const STAGES=['Je découvre',"Je m'entraîne",'Je sais faire'];
+
+/* ---------- En-tête ---------- */
+function renderHeader(){
+  $('#prenom').value=state.prenom||'';
+  $('#mainTitle').textContent=state.prenom?`Les super-pouvoirs de ${state.prenom}`:'Mes super-pouvoirs avec les autres';
+  $('#gardenTitle').textContent=state.prenom?`Le jardin de ${state.prenom}`:'Mon jardin des super-pouvoirs';
+  $('#avatars').innerHTML=KIDS.map(k=>`<button class="av" aria-pressed="${state.kid===k.id}" data-kid="${k.id}" aria-label="${k.nom}"><svg viewBox="-40 -170 80 80">${person(k,'content',{x:0,y:0,k:1})}</svg></button>`).join('');
+}
+$('#prenom').addEventListener('input',e=>{state.prenom=e.target.value.trim();save();renderHeader();renderCards();renderBoard();});
+$('#avatars').addEventListener('click',e=>{const b=e.target.closest('[data-kid]');if(!b)return;state.kid=b.dataset.kid;save();renderHeader();renderCards();renderPreview();});
+
+/* ---------- Onglets ---------- */
+function showTab(t){
+  $$('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t));
+  ['cartes','ajouter','tableau','parents'].forEach(p=>{const el=$('#p-'+p);el.hidden=p!==t;el.style.display=p===t?'flex':'';});
+  if(t==='tableau')renderBoard();
+  if(t==='ajouter')renderPreview();
+  try{sessionStorage.setItem(KEY+'-tab',t);}catch(e){}
+}
+$$('nav.tabs button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+document.addEventListener('click',e=>{const g=e.target.closest('[data-goto]');if(g){if(g.dataset.goto==='ajouter')resetForm();showTab(g.dataset.goto);}});
+
+/* ---------- Cartes ---------- */
+let filter='all';
+$$('#stageFilters .chip').forEach(c=>c.addEventListener('click',()=>{filter=c.dataset.f;$$('#stageFilters .chip').forEach(x=>x.setAttribute('aria-pressed',x===c));renderCards();}));
+let dom='all';
+function renderDomFilters(){
+  const used=new Set(state.skills.map(domOf));
+  $('#domFilters').innerHTML=`<button class="chip" aria-pressed="${dom==='all'}" data-dom="all">Tous les domaines</button>`+DOM_ORDER.filter(d=>used.has(d)).map(d=>`<button class="chip" aria-pressed="${dom===d}" data-dom="${d}" title="${esc(DOMAINES[d].nom)}"><span class="dot" style="background:${DOMAINES[d].c}"></span>${esc(DOMAINES[d].court)}</button>`).join('');
+}
+$('#domFilters').addEventListener('click',e=>{const b=e.target.closest('[data-dom]');if(!b)return;dom=b.dataset.dom;renderCards();});
+function renderCards(){
+  if(dom!=='all'&&!state.skills.some(s=>domOf(s)===dom))dom='all';
+  renderDomFilters();
+  const list=state.skills.filter(s=>(filter==='all'||String(s.stage||0)===filter)&&(dom==='all'||domOf(s)===dom));
+  $('#cards').innerHTML=list.length?DOM_ORDER.map(d=>[d,list.filter(s=>domOf(s)===d)]).filter(g=>g[1].length).map(([d,l])=>`<section class="group" aria-label="${esc(DOMAINES[d].nom)}"><h2 class="gtitle"><span class="dot" style="background:${DOMAINES[d].c}"></span>${esc(DOMAINES[d].nom)}<small>${l.length} carte${l.length>1?'s':''}</small></h2><div class="cards">${l.map(cardHTML).join('')}</div></section>`).join(''):`<p class="caption">Aucune carte ici pour l'instant.</p>`;
+}
+function cardHTML(s){return `
+   <article class="card ${s.stage===2?'mastered':''}" data-id="${s.id}">
+     <button class="thumb" data-act="play" aria-label="Regarder l'histoire : ${esc(s.titre)}">${sceneSVG(s,-1,state.kid)}<span class="play">${PLAY}Regarder l'histoire</span></button>
+     <h3>${esc(s.titre)}</h3>
+     ${s.quand?`<p class="when">${esc(s.quand)}</p>`:''}
+     ${s.dire?`<p class="say">${esc(s.dire)}</p>`:''}
+     ${s.pourquoi?`<p class="why"><b>Pourquoi ?</b> ${esc(s.pourquoi)}</p>`:''}
+     ${s.astuce?`<p class="tip"><b>Astuce parents :</b> ${esc(s.astuce)}</p>`:''}
+     <div class="stages" role="group" aria-label="Où en est l'enfant">${STAGES.map((l,i)=>`<button data-act="stage" data-v="${i}" aria-pressed="${(s.stage||0)===i}"><svg viewBox="0 0 40 40" aria-hidden="true">${plant(i)}</svg>${l}</button>`).join('')}</div>
+     <div class="row" data-zone="actions"><button class="btn soft" data-act="edit">Modifier</button><button class="btn ghost" data-act="del">Supprimer</button></div>
+   </article>`;}
+$('#cards').addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const card=b.closest('.card');const s=state.skills.find(x=>x.id===card.dataset.id);if(!s)return;
+  const a=b.dataset.act;
+  if(a==='play')openStory(s);
+  if(a==='stage'){const v=+b.dataset.v;const was=s.stage;s.stage=v;save();renderCards();if(v===2&&was!==2)toast('Bravo ! Un nouvel arbre pousse dans le jardin.');}
+  if(a==='edit'){fillForm(s);showTab('ajouter');}
+  if(a==='del'){card.querySelector('[data-zone="actions"]').innerHTML=`<div class="confirm">Supprimer cette carte et ses étoiles ?<button class="btn rose" data-act="del-yes">Oui, supprimer</button><button class="btn ghost" data-act="del-no">Non</button></div>`;}
+  if(a==='del-no')renderCards();
+  if(a==='del-yes'){state.skills=state.skills.filter(x=>x.id!==s.id);delete state.stars[s.id];save();renderCards();toast('Carte supprimée');}
+});
+
+/* ---------- Histoire (dessin animé) ---------- */
+let cur=null,step=0,sound=true,player=null,playTok=0,advTimer=null;
+const canSpeak='speechSynthesis' in window;
+const AUDIO={},VLOAD={};
+window.VOIX_ADD=m=>{Object.assign(AUDIO,m);};
+/* Charge la voix Denise d'une histoire (fichier voix/<id>.js), puis appelle cb. Sans fichier : voix du navigateur. */
+function loadVoice(id,cb){
+  if(!EXAMPLES.some(e=>e.id===id)||VLOAD[id]===true){cb();return;}
+  if(VLOAD[id]){VLOAD[id].push(cb);return;}
+  VLOAD[id]=[cb];let t;
+  const done=()=>{const l=VLOAD[id];if(l===true)return;VLOAD[id]=true;clearTimeout(t);l.forEach(f=>f());};
+  t=setTimeout(done,8000);
+  const sc=document.createElement('script');sc.src='voix/'+id+'.js';sc.onload=done;sc.onerror=done;document.head.appendChild(sc);
+}
+function soundLabel(){const b=$('#dlgSound');b.setAttribute('aria-pressed',sound);b.textContent=sound?'Couper le son':'Remettre le son';}
+function stopVoice(){playTok++;clearTimeout(advTimer);try{if(player){player.pause();player=null;}}catch(e){}try{if(canSpeak)speechSynthesis.cancel();}catch(e){}}
+/* Joue une phrase : la voix enregistrée (Denise) si le texte n'a pas été modifié, sinon la voix du navigateur. */
+function say(key,text,done){
+  const tok=playTok;const fin=()=>{if(tok===playTok&&done)done();};
+  if(!text){fin();return;}
+  const a=AUDIO[key];
+  if(a&&a.t===text){try{player=new Audio(a.src);player.onended=fin;player.play().catch(()=>{});return;}catch(e){}}
+  if(canSpeak){try{const u=new SpeechSynthesisUtterance(String(text).replace(/[«»()]/g,''));u.lang='fr-FR';u.rate=.92;const v=speechSynthesis.getVoices().find(v=>/^fr/i.test(v.lang));if(v)u.voice=v;u.onend=fin;speechSynthesis.speak(u);return;}catch(e){}}
+  fin();
+}
+function playStep(){
+  stopVoice();if(!sound)return;
+  const n=(cur.bulles||[]).length;const b=cur.bulles[step]||{};const end=step>=n-1;
+  const tok0=playTok;
+  loadVoice(cur.id,()=>{if(tok0!==playTok)return;
+  say(cur.id+'-'+step,b.texte,()=>{
+    if(!end){const tok=playTok;advTimer=setTimeout(()=>{if(tok===playTok){step++;drawStory();}},700);}
+    else if(cur.pourquoi){const tok=playTok;advTimer=setTimeout(()=>{if(tok===playTok)say(cur.id+'-pourquoi',cur.pourquoi);},600);}
+  });});
+}
+function drawStory(){
+  const n=(cur.bulles||[]).length;
+  $('#dlgStage').innerHTML=stageHTML(cur,step,state.kid,state.prenom);
+  $('#dlgDots').innerHTML=Array.from({length:n},(_,i)=>`<span class="${i<=step?'on':''}"></span>`).join('');
+  $('#dlgPrev').disabled=step<=0;
+  $('#dlgNext').textContent=step>=n-1?'Recommencer':'Suite';
+  const end=step>=n-1;
+  $('#dlgSay').hidden=!end||!cur.dire;$('#dlgWhy').hidden=!end||!cur.pourquoi;
+  $('#dlgSay').textContent=cur.dire||'';$('#dlgWhy').innerHTML=`<b style="color:var(--teal)">Pourquoi ?</b> ${esc(cur.pourquoi||'')}`;
+  playStep();
+}
+function openStory(s){cur=s;step=0;$('#dlgTitle').textContent=s.titre;$('#dlgWhen').textContent=s.quand||'';soundLabel();const d=$('#dlg');if(d.showModal)d.showModal();else d.setAttribute('open','');drawStory();}
+$('#dlgNext').addEventListener('click',()=>{const n=(cur.bulles||[]).length;step=step>=n-1?0:step+1;drawStory();});
+$('#dlgPrev').addEventListener('click',()=>{if(step>0){step--;drawStory();}});
+$('#dlgSound').addEventListener('click',()=>{sound=!sound;soundLabel();if(sound)playStep();else stopVoice();});
+$('#dlgClose').addEventListener('click',()=>{stopVoice();$('#dlg').close?$('#dlg').close():$('#dlg').removeAttribute('open');});
+$('#dlg').addEventListener('close',stopVoice);
+
+/* ---------- Formulaire ---------- */
+let editing=null, draft;
+function blankDraft(){return {domaine:'perso',titre:'',quand:'',dire:'',pourquoi:'',astuce:'',decor:'maison',autre:'copain',emoDebut:'triste',emoFin:'content',stage:1,bulles:[{qui:'enfant',texte:''},{qui:'autre',texte:''},{qui:'enfant',texte:''}]};}
+draft=blankDraft();
+const emoOpts=Object.entries(EMOS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+$('#f-emo1').innerHTML=emoOpts;$('#f-emo2').innerHTML=emoOpts;
+$('#f-domaine').innerHTML=DOM_ORDER.map(d=>`<option value="${d}">${esc(DOMAINES[d].nom)}</option>`).join('');
+$('#f-domaine').addEventListener('change',e=>{draft.domaine=e.target.value;});
+function renderPickers(){
+  $('#pick-decor').innerHTML=Object.entries(DECORS).map(([k,v])=>`<button type="button" data-decor="${k}" aria-pressed="${draft.decor===k}"><svg viewBox="0 0 600 340">${decor(k)}</svg>${v}</button>`).join('');
+  $('#pick-other').innerHTML=Object.entries(OTHERS).map(([k,o])=>`<button type="button" data-other="${k}" aria-pressed="${draft.autre===k}"><svg viewBox="${o.type==='petit'?'-35 -128 70 70':'-45 -175 90 90'}">${person(o,'content',{x:0,y:0,k:1})}</svg>${o.nom}</button>`).join('');
+}
+function renderSteps(){
+  $('#steps').innerHTML=draft.bulles.map((b,i)=>`<div class="step"><select data-i="${i}" data-k="qui" aria-label="Qui parle, bulle ${i+1}"><option value="enfant" ${b.qui==='enfant'?'selected':''}>L'enfant</option><option value="autre" ${b.qui==='autre'?'selected':''}>${esc(OTHERS[draft.autre].nom)}</option></select><input data-i="${i}" data-k="texte" maxlength="90" value="${esc(b.texte)}" placeholder="Bulle ${i+1}" aria-label="Texte de la bulle ${i+1}"><button type="button" class="btn ghost" data-rm="${i}" aria-label="Retirer la bulle ${i+1}" ${draft.bulles.length<=2?'disabled':''}>Retirer</button></div>`).join('');
+  $('#addStep').disabled=draft.bulles.length>=4;
+}
+let prevStep=0,prevTimer;
+function renderPreview(){
+  const n=draft.bulles.filter(b=>b.texte.trim()).length;
+  const sk=Object.assign({},draft,{titre:draft.titre||'Nouvelle habileté',bulles:draft.bulles.filter(b=>b.texte.trim())});
+  if(prevStep>=n)prevStep=0;
+  $('#preview').innerHTML=stageHTML(sk,n?prevStep:-1,state.kid,state.prenom);
+}
+clearInterval(prevTimer);prevTimer=setInterval(()=>{if($('#p-ajouter').hidden)return;const n=draft.bulles.filter(b=>b.texte.trim()).length;if(n){prevStep=(prevStep+1)%n;renderPreview();}},2600);
+function syncFields(){
+  ['titre','quand','dire','pourquoi','astuce'].forEach(k=>$('#f-'+k).value=draft[k]||'');
+  $('#f-emo1').value=draft.emoDebut;$('#f-emo2').value=draft.emoFin;$('#f-domaine').value=domOf(draft);
+  renderPickers();renderSteps();renderPreview();
+}
+function resetForm(){editing=null;draft=blankDraft();$('#formTitle').textContent='Ajouter une nouvelle habileté';$('#cancelEdit').hidden=true;$('#formMsg').textContent='';syncFields();}
+function fillForm(s){editing=s.id;draft=JSON.parse(JSON.stringify(s));while(draft.bulles.length<2)draft.bulles.push({qui:'enfant',texte:''});$('#formTitle').textContent='Modifier la carte';$('#cancelEdit').hidden=false;$('#formMsg').textContent='';syncFields();}
+['titre','quand','dire','pourquoi','astuce'].forEach(k=>$('#f-'+k).addEventListener('input',e=>{draft[k]=e.target.value;if(k==='titre')renderPreview();}));
+$('#f-emo1').addEventListener('change',e=>{draft.emoDebut=e.target.value;renderPreview();});
+$('#f-emo2').addEventListener('change',e=>{draft.emoFin=e.target.value;renderPreview();});
+$('#pick-decor').addEventListener('click',e=>{const b=e.target.closest('[data-decor]');if(!b)return;draft.decor=b.dataset.decor;renderPickers();renderPreview();});
+$('#pick-other').addEventListener('click',e=>{const b=e.target.closest('[data-other]');if(!b)return;draft.autre=b.dataset.other;renderPickers();renderSteps();renderPreview();});
+$('#steps').addEventListener('input',e=>{const t=e.target;if(t.dataset.i==null)return;draft.bulles[+t.dataset.i][t.dataset.k]=t.value;renderPreview();});
+$('#steps').addEventListener('change',e=>{const t=e.target;if(t.tagName==='SELECT'){draft.bulles[+t.dataset.i].qui=t.value;renderPreview();}});
+$('#steps').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(!b)return;draft.bulles.splice(+b.dataset.rm,1);renderSteps();renderPreview();});
+$('#addStep').addEventListener('click',()=>{if(draft.bulles.length<4){const last=draft.bulles[draft.bulles.length-1];draft.bulles.push({qui:last&&last.qui==='enfant'?'autre':'enfant',texte:''});renderSteps();}});
+$('#cancelEdit').addEventListener('click',()=>{resetForm();showTab('cartes');});
+$('#form').addEventListener('submit',e=>{
+  e.preventDefault();
+  if(!draft.titre.trim()){$('#formMsg').textContent='Donnez un titre à la carte (par exemple « Demander des nouvelles »).';$('#f-titre').focus();return;}
+  const bulles=draft.bulles.filter(b=>b.texte.trim()).map(b=>({qui:b.qui,texte:b.texte.trim(),...(b.emo?{emo:b.emo}:{})}));
+  if(bulles.length<1){$('#formMsg').textContent="Écrivez au moins une bulle pour la petite histoire.";return;}
+  const rec=Object.assign({},draft,{titre:draft.titre.trim(),bulles});
+  if(editing){const i=state.skills.findIndex(x=>x.id===editing);rec.id=editing;state.skills[i]=rec;}
+  else{rec.id='h'+Date.now().toString(36);state.skills.unshift(rec);}
+  save();filter='all';dom='all';$$('#stageFilters .chip').forEach(x=>x.setAttribute('aria-pressed',x.dataset.f==='all'));
+  renderCards();toast(editing?'Carte modifiée':'Nouvelle carte ajoutée !');resetForm();showTab('cartes');
+});
+
+/* ---------- Jardin + tableau ---------- */
+function renderGarden(){
+  const sk=state.skills;const w=Math.max(600,sk.length*118+40);
+  let g=`<svg viewBox="0 0 ${w} 210" role="img" aria-label="Jardin : ${sk.filter(s=>s.stage===2).length} arbres, ${sk.filter(s=>s.stage===1).length} pousses, ${sk.filter(s=>!s.stage).length} graines"><rect width="${w}" height="210" fill="#bfe7f3" rx="16"/><circle cx="${w-60}" cy="44" r="24" fill="#ffd34d"/><rect y="150" width="${w}" height="60" fill="#8fd07a"/>`;
+  sk.forEach((s,i)=>{const x=40+i*118;const st=s.stage||0;const sc=st===2?2.6:st===1?2:1.6;
+    g+=`<g transform="translate(${x+59-20*sc},${160-40*sc+4})"><g transform="scale(${sc})">${plant(st)}</g></g><text x="${x+59}" y="190" text-anchor="middle" font-family="Nunito,sans-serif" font-size="12" font-weight="700" fill="#1d3d44">${esc(short(s.titre))}</text>`;});
+  $('#garden').innerHTML=g+'</svg>';
+  [0,1,2].forEach(i=>$('#lg'+i).innerHTML=plant(i));
+}
+function short(t){t=String(t);return t.length>17?t.slice(0,16)+'…':t;}
+function renderBoard(){
+  renderGarden();
+  const rows=state.skills.filter(s=>(s.stage||0)>=1);
+  const list=rows.length?rows:state.skills.slice(0,3);
+  let h=`<thead><tr><th class="sk" scope="col">Super-pouvoir</th>${DAYS.map(d=>`<th scope="col">${d}</th>`).join('')}<th scope="col">Total</th></tr></thead><tbody>`;
+  let total=0;
+  list.forEach(s=>{const st=state.stars[s.id]||[];const t=st.filter(Boolean).length;total+=t;
+    h+=`<tr><td class="sk">${esc(s.titre)}<small>${STAGES[s.stage||0]}</small></td>${DAYS.map((d,i)=>`<td class="c"><button data-star="${s.id}" data-d="${i}" aria-pressed="${!!st[i]}" aria-label="${esc(s.titre)}, ${d}">${st[i]?STAR_ON:STAR_OFF}</button></td>`).join('')}<td class="tot">${t}</td></tr>`;});
+  h+='</tbody>';
+  $('#table').innerHTML=h;
+    const lvl=total>=20?'Champion des copains !':total>=10?'Super copain !':total>=4?'Ça pousse bien !':'C’est parti !';
+  const fill=Math.min(1,total/21);
+  $('#jar').innerHTML=`<svg viewBox="0 0 110 130" aria-hidden="true"><rect x="30" y="4" width="50" height="14" rx="5" fill="#a8744f"/><path d="M22 22 h66 q8 0 8 10 v82 q0 12 -12 12 h-58 q-12 0 -12 -12 v-82 q0 -10 8 -10z" fill="#ffffff" fill-opacity=".6" stroke="#0e6b74" stroke-width="4"/><clipPath id="jc"><path d="M24 24 h62 q8 0 8 10 v80 q0 10 -10 10 h-58 q-10 0 -10 -10 v-80 q0 -10 8 -10z"/></clipPath><g clip-path="url(#jc)"><rect x="14" y="${124-100*fill}" width="82" height="${100*fill+4}" fill="#ffd34d"/>${Array.from({length:Math.min(total,18)},(_,i)=>`<path transform="translate(${26+(i%5)*13},${112-Math.floor(i/5)*14}) scale(.5)" d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.5L12 17.2l-5.9 3.2 1.3-6.5L2.5 9.3l6.6-.8z" fill="#f4b400" stroke="#c98a00"/>`).join('')}</g></svg>
+   <div><div class="big">${total} étoile${total>1?'s':''}</div><div class="lvl">${lvl}</div><p class="caption">${rows.length?'Cette semaine, dans le bocal à étoiles.':'Passez une carte en « Je m’entraîne » pour la voir ici. En attendant, voici les trois premières.'}</p></div>`;
+}
+$('#table').addEventListener('click',e=>{const b=e.target.closest('[data-star]');if(!b)return;const id=b.dataset.star,d=+b.dataset.d;const st=state.stars[id]||(state.stars[id]=[]);st[d]=!st[d];save();renderBoard();if(st[d])toast('Une étoile de plus !');});
+const RW_ASK='<div class="confirm">Effacer les étoiles de la semaine ?<button class="btn rose" data-rw="yes">Oui</button><button class="btn ghost" data-rw="no">Non</button></div>';
+const RW_BTN='<button class="btn rose" data-rw="ask">Nouvelle semaine</button>';
+$('#resetZone').innerHTML=RW_BTN;
+$('#resetZone').addEventListener('click',e=>{const b=e.target.closest('[data-rw]');if(!b)return;const v=b.dataset.rw;
+  if(v==='ask'){$('#resetZone').innerHTML=RW_ASK;return;}
+  if(v==='yes'){state.stars={};save();renderBoard();toast('Nouvelle semaine : à vous de jouer !');}
+  $('#resetZone').innerHTML=RW_BTN;});
+
+/* ---------- Sauvegarde ---------- */
+function refreshCode(){try{$('#saveCode').value=btoa(unescape(encodeURIComponent(JSON.stringify(state))));}catch(e){}}
+$('#copyCode').addEventListener('click',()=>{const t=$('#saveCode');navigator.clipboard?.writeText(t.value).then(()=>{$('#saveMsg').textContent='Code copié.';},()=>{t.select();$('#saveMsg').textContent='Le code est sélectionné : copiez-le avec Ctrl+C.';})??(t.select());});
+$('#loadCode').addEventListener('click',()=>{try{const s=JSON.parse(decodeURIComponent(escape(atob($('#saveCode').value.trim()))));if(!Array.isArray(s.skills))throw 0;state=Object.assign(fresh(),s);save();renderAll();$('#saveMsg').textContent='Carnet chargé.';}catch(e){$('#saveMsg').textContent="Ce code n'est pas reconnu. Vérifiez qu'il a été copié en entier.";}});
+const RA_ASK='<div class="confirm">Remplacer tout le carnet par les exemples de départ ? Vos cartes et vos étoiles seront effacées.<button class="btn rose" data-ra="yes">Oui, recommencer</button><button class="btn ghost" data-ra="no">Non</button></div>';
+const RA_BTN='<button class="btn ghost" data-ra="ask">Revenir aux exemples de départ</button>';
+$('#resetAllZone').innerHTML=RA_BTN;
+$('#resetAllZone').addEventListener('click',e=>{const b=e.target.closest('[data-ra]');if(!b)return;const v=b.dataset.ra;
+  if(v==='ask'){$('#resetAllZone').innerHTML=RA_ASK;return;}
+  if(v==='yes'){state=fresh();save();renderAll();toast('Carnet remis à zéro');}
+  $('#resetAllZone').innerHTML=RA_BTN;});
+
+function renderAll(){renderHeader();renderCards();renderBoard();syncFields();refreshCode();}
+renderAll();
+let t0='cartes';try{t0=sessionStorage.getItem(KEY+'-tab')||'cartes';}catch(e){}
+showTab(['cartes','ajouter','tableau','parents'].includes(t0)?t0:'cartes');
+})();
+</script>
+
+</body>
+</html>
